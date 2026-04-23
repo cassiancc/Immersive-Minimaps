@@ -1,0 +1,42 @@
+package cc.cassian.immersiveminimaps.config;
+
+import folk.sisby.kaleido.api.WrappedConfig;
+import folk.sisby.kaleido.lib.quiltconfig.api.annotations.Comment;
+import folk.sisby.kaleido.lib.quiltconfig.api.annotations.IntegerRange;
+import folk.sisby.kaleido.lib.quiltconfig.api.values.ValueList;
+import folk.sisby.kaleido.lib.quiltconfig.api.values.ValueMap;
+import folk.sisby.kaleido.lib.quiltconfig.impl.Comments;
+import folk.sisby.surveyor.client.SurveyorClient;
+import garden.hestia.hoofprint.HoofprintConfig;
+import garden.hestia.hoofprint.HoofprintMapStorage;
+import garden.hestia.hoofprint.util.ConstantLightMap;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class ModConfig extends WrappedConfig {
+
+	public boolean minimap_enable = true;
+	public boolean moved_by_effects = true;
+	public boolean hide_from_debug = true;
+	public boolean search_containers_for_containers = true;
+	public ValueList<String> items = ValueList.create("minecraft:map");
+	public boolean require_item = true;
+	public boolean search_containers = true;
+	public int defaultScale = -1;
+
+	@Comment({"Options to change the visuals of the map to be more or less vanilla-style."})
+	public Style style = new Style();
+	public static class Style implements WrappedConfig.Section {
+		@Comment("Whether to render a background behind the map.")
+		public boolean draw_background = true;
+		@Comment("Whether to show disconnected players and offline group members on the map.")
+		public boolean offlinePlayers = true;
+	}
+}

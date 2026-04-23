@@ -1,0 +1,32 @@
+{
+	"schemaVersion": 1,
+	"id": "immersiveminimaps",
+	"version": "${version}",
+	"name": "Immersive Minimaps",
+	"description": "A Surveyor-powered clientside minimap overlayed on your HUD - as long as you have the right item in your inventory (or bundle!)",
+	"authors": [
+		"cassiancc"
+	],
+	"contact": {
+		"homepage": "https://github.com/cassiancc/Immersive-Minimaps",
+		"sources": "https://github.com/cassiancc/Immersive-Minimaps",
+		"issues": "https://github.com/cassiancc/Immersive-Minimaps/issues"
+	},
+	"license": "LGPL-3.0-or-later",
+	"icon": "assets/immersiveminimaps/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"cc.cassian.immersiveminimaps.ModClient"
+		]
+	},
+	"mixins": [
+		"immersiveminimaps.mixins.json"
+	],
+	"depends": {
+		"fabricloader": "*",
+		"minecraft": "${minecraft}",
+		"fabric-api": "*",
+		"surveyor": "*"
+	}
+}
