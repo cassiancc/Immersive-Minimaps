@@ -2,14 +2,17 @@ package cc.cassian.immersiveminimaps.overlay;
 
 import cc.cassian.immersiveminimaps.ModClient;
 import cc.cassian.immersiveminimaps.helpers.ModLists;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+//? if >1.21.2 {
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.util.ARGB;
+//?}
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -143,7 +146,11 @@ public class OverlayHelpers {
 
 	public static void checkInventoryForStack(Inventory inventory) {
 		for (ItemStack stack :
+				//? if >1.21.2 {
 				inventory.getNonEquipmentItems()
+				//?} else {
+				/*inventory.items
+				*///?}
 		) {
 			isImportantItem(stack);
 			if (isContainer(stack)) {
@@ -160,30 +167,33 @@ public class OverlayHelpers {
 		}
 	}
 
-	public static void drawString(GuiGraphicsExtractor guiGraphics, Font font, Component text, int x, int y, Integer color) {
-		color = ARGB.opaque(color);
-		guiGraphics.text(font, text, x, y, color);
-	}
-
-	public static void drawString(GuiGraphicsExtractor guiGraphics, Font font, String text, int x, int y, Integer color) {
-		color = ARGB.opaque(color);
-		guiGraphics.text(font, text, x, y, color);
-	}
-
 	public static void blit(GuiGraphicsExtractor guiGraphics, Identifier texture, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight, int textureWidth, int textureHeight) {
-		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, uOffset, vOffset, uWidth, vHeight, textureWidth, textureHeight);
+		guiGraphics.blit(
+				//? if >1.21.2
+				RenderPipelines.GUI_TEXTURED,
+				texture, x, y, uOffset, vOffset, uWidth, vHeight, textureWidth, textureHeight);
 	}
 
-	public static void blitSprite(GuiGraphicsExtractor GuiGraphicsExtractor, String texture, int x, int y) {
-		blitSprite(GuiGraphicsExtractor, ModClient.locate("textures/gui/sprites/%s.png".formatted(texture)), x, y);
+	public static void blit(GuiGraphicsExtractor guiGraphics, Identifier id, int x, int y, float u, float v, int width, int height, int uWidth, int vHeight, int textureWidth, int textureHeight, int color) {
+		guiGraphics.blit(
+				//? if >1.21.2 {
+				RenderPipelines.GUI_TEXTURED,id, x, y, u, v, width, height, uWidth, vHeight, textureWidth, textureHeight, color
+				//?} else {
+				/*id, x, y, 0, u, v, uWidth, vHeight, textureWidth, textureHeight
+				*///?}
+		);
 	}
 
-	public static void blitSprite(GuiGraphicsExtractor GuiGraphicsExtractor, Identifier texture, int x, int y) {
-		blitSprite(GuiGraphicsExtractor, texture, x, y, 16);
+	public static void blitSprite(GuiGraphicsExtractor guiGraphics, String texture, int x, int y) {
+		blitSprite(guiGraphics, ModClient.locate("textures/gui/sprites/%s.png".formatted(texture)), x, y);
 	}
 
-	public static void blitSprite(GuiGraphicsExtractor GuiGraphicsExtractor, Identifier texture, int x, int y, int size) {
-		blit(GuiGraphicsExtractor, texture, x, y, 0, 0, size, size, size, size);
+	public static void blitSprite(GuiGraphicsExtractor guiGraphics, Identifier texture, int x, int y) {
+		blitSprite(guiGraphics, texture, x, y, 16);
+	}
+
+	public static void blitSprite(GuiGraphicsExtractor guiGraphics, Identifier texture, int x, int y, int size) {
+		blit(guiGraphics, texture, x, y, 0, 0, size, size, size, size);
 	}
 
 	static boolean hasBeenToggled = false;

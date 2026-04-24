@@ -160,6 +160,14 @@ stonecutter {
         direction = eval(current.version, ">26")
         replace("guiGraphics.renderFakeItem", "guiGraphics.fakeItem")
     }
+    replacements.string {
+        direction = eval(current.version, ">1.21.2")
+        replace("pushPose", "pushMatrix")
+    }
+    replacements.string {
+        direction = eval(current.version, ">1.21.2")
+        replace("popPose", "popMatrix")
+    }
 }
 
 fabricApi {

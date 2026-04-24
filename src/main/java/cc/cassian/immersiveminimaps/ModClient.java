@@ -14,7 +14,11 @@ import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 //?} else {
 /*import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 *///?}
+//? if >1.21.2 {
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+//?} else {
+/*import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+*///?}
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -61,7 +65,11 @@ public class ModClient implements ClientModInitializer {
 		ClientTickEvents.END_CLIENT_TICK.register(ModClient::tick);
 		ClientLifecycleEvents.CLIENT_STARTED.register((client -> ModLists.loadLists()));
 		CONFIG.registerCallback(config -> ModLists.loadLists());
+		//? if >1.21.2 {
 		HudElementRegistry.addFirst(ModClient.locate("minimap"), MinimapOverlay.INSTANCE);
+		//?} else {
+		/*HudRenderCallback.EVENT.register(MinimapOverlay.INSTANCE::render);
+		*///?}
 		//? if <26 {
 		/*KeyBindingHelper.registerKeyBinding(ModClient.zoomIn);
 		KeyBindingHelper.registerKeyBinding(ModClient.zoomOut);

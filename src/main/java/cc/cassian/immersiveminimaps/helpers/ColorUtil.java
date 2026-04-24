@@ -171,7 +171,9 @@ package cc.cassian.immersiveminimaps.helpers;
 import garden.hestia.hoofprint.Hoofprint;
 import garden.hestia.hoofprint.util.BlockConstants;
 import garden.hestia.hoofprint.util.ColorConstants;
+//? if >1.21.2 {
 import net.minecraft.util.ARGB;
+//?}
 import net.minecraft.world.level.FoliageColor;
 import net.minecraft.world.level.block.Block;
 
@@ -186,6 +188,7 @@ public class ColorUtil {
 			BlockConstants.GRASS_BLOCKS::contains, foliage -> ColorUtil.tint(ColorConstants.GRASS_TEXTURE_COLOR, foliage),
 			BlockConstants.GRASS_BLOCK_BLOCKS::contains, foliage -> ColorUtil.tint(ColorConstants.GRASS_BLOCK_TEXTURE_COLOR, foliage)
 	);
+	//? if >1.21.2 {
 	public static final Map<Predicate<Block>, Integer> CONSTANT_BLOCK_COLOR_PROVIDERS = Map.of(
 			BlockConstants.STONE_BLOCKS::contains, ColorConstants.STONE_MAP_COLOR,
 			BlockConstants.ICE_BLOCKS::contains, ColorConstants.ICE_MAP_COLOR,
@@ -193,6 +196,15 @@ public class ColorUtil {
 			BlockConstants.BIRCH_BLOCKS::contains, ColorUtil.tint(ColorConstants.FOLIAGE_TEXTURE_COLOR, FoliageColor.FOLIAGE_BIRCH),
 			BlockConstants.MANGROVE_BLOCKS::contains, ColorUtil.tint(ColorConstants.FOLIAGE_TEXTURE_COLOR, FoliageColor.FOLIAGE_MANGROVE)
 	);
+	//?} else {
+	/*public static final Map<Predicate<Block>, Integer> CONSTANT_BLOCK_COLOR_PROVIDERS = Map.of(
+			BlockConstants.STONE_BLOCKS::contains, ColorConstants.STONE_MAP_COLOR,
+			BlockConstants.ICE_BLOCKS::contains, ColorConstants.ICE_MAP_COLOR,
+			BlockConstants.SPRUCE_BLOCKS::contains, ColorUtil.tint(ColorConstants.FOLIAGE_TEXTURE_COLOR, FoliageColor.getEvergreenColor()),
+			BlockConstants.BIRCH_BLOCKS::contains, ColorUtil.tint(ColorConstants.FOLIAGE_TEXTURE_COLOR, FoliageColor.getBirchColor()),
+			BlockConstants.MANGROVE_BLOCKS::contains, ColorUtil.tint(ColorConstants.FOLIAGE_TEXTURE_COLOR, FoliageColor.getMangroveColor())
+	);
+	*///?}
 
 	public static int tint(int base, int tint) {
 		int a1 = (base >>> 24);
@@ -304,9 +316,11 @@ public class ColorUtil {
 		return (argbColor & 0xFF00FF00) | (b << 16) | r;
 	}
 
+	//? if >1.21.2 {
 	public static float[] getColorFromArgb(int color) {
 		return new float[]{ARGB.red(color) / 255f, ARGB.green(color) / 255f, ARGB.blue(color) / 255f};
 	}
+	//?}
 
 	public enum Brightness {
 		LOW(180),

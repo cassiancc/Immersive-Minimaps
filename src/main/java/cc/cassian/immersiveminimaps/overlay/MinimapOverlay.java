@@ -3,6 +3,8 @@ package cc.cassian.immersiveminimaps.overlay;
 
 import cc.cassian.immersiveminimaps.ModClient;
 import cc.cassian.immersiveminimaps.helpers.ColorUtil;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import folk.sisby.surveyor.PlayerSummary;
 import folk.sisby.surveyor.client.SurveyorClient;
 import folk.sisby.surveyor.landmark.Landmark;
@@ -11,16 +13,20 @@ import folk.sisby.surveyor.util.RegionPos;
 import garden.hestia.hoofprint.HoofprintMapStorage;
 
 import java.util.*;
-
+//? if >1.21.2 {
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.util.ARGB;
+import static net.minecraft.util.ARGB.color;
+//?} else {
+/*import static net.minecraft.util.FastColor.ABGR32.color;
+*///?}
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
@@ -28,7 +34,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.border.WorldBorder;
 import org.jspecify.annotations.Nullable;
 
-public class MinimapOverlay implements HudElement {
+
+public class MinimapOverlay
+		//? if >1.21.2
+		implements HudElement
+{
 	public static final Identifier BACKGROUND = ModClient.locate("background");
 	public static boolean showMinimap;
 	private final float PLAYER_ROTATION_STEPS = 16.0F;
@@ -46,12 +56,15 @@ public class MinimapOverlay implements HudElement {
 	public void extractRenderState(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
 		if (OverlayHelpers.shouldCancelRender(mc) || !showMinimap) return;
 		if (ModClient.CONFIG.style.draw_background) {
-			guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND, 2, 2, width()+5, height()+5);
+			guiGraphics.blitSprite(
+					//? if >1.21.2
+					RenderPipelines.GUI_TEXTURED,
+					BACKGROUND, 2, 2, width()+5, height()+5);
 		}
 		HoofprintMapStorage mapStorage = mapStorage();
 		guiGraphics.pose().pushMatrix();
 		float scaleFactor = this.getScaleFactor();
-		guiGraphics.pose().scale(scaleFactor, scaleFactor);
+		scale(guiGraphics, scaleFactor, scaleFactor);
 		WorldBorder worldBorder = this.mc.level.getWorldBorder();
 		double size = worldBorder.getSize();
 		int borderX1 = Math.max((int)Math.floor(worldBorder.getCenterX() - size / (double)2.0F), mapStorage.minBlockX);
@@ -75,8 +88,10 @@ public class MinimapOverlay implements HudElement {
 			int drawHeight = Math.min(512, renderZ2 - regionZ1) - v;
 			if (drawHeight > 0 && drawWidth > 0) {
 				guiGraphics.pose().pushMatrix();
-				guiGraphics.pose().translate((float)this.worldXToRenderX(regionX1 + u), (float)this.worldZToRenderY(regionZ1 + v));
-				guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, 0, 0, (float)u, (float)v, drawWidth, drawHeight, drawWidth, drawHeight, 512, 512);
+				translate(guiGraphics, (float)this.worldXToRenderX(regionX1 + u), (float)this.worldZToRenderY(regionZ1 + v));
+				OverlayHelpers.blit(
+						guiGraphics,
+						texture, 0, 0, u, v, drawWidth, drawHeight, 512, 512);
 				guiGraphics.pose().popMatrix();
 			}
 		}
@@ -84,7 +99,7 @@ public class MinimapOverlay implements HudElement {
 		guiGraphics.pose().popMatrix();
 		double bestDistance = Double.MAX_VALUE;
 
-		for(Landmark landmark : mapStorage.landmarks.values()) {
+		for(@Nullable Landmark landmark : mapStorage.landmarks.values()) {
 			if (landmark != null) {
 				BlockPos pos = landmark.get(LandmarkComponentTypes.POS);
 				if (!this.hideDecorations) {
@@ -123,7 +138,7 @@ public class MinimapOverlay implements HudElement {
 		return ModClient.CONFIG.size;
 	}
 
-	private void renderPlayer(GuiGraphicsExtractor context, PlayerSummary player, UUID uuid) {
+	private void renderPlayer(GuiGraphicsExtractor guiGraphics, PlayerSummary player, UUID uuid) {
 		boolean friend = !SurveyorClient.getClientUuid().equals(uuid);
 		boolean inDim = player.dimension().equals(this.dim);
 		if ((!friend || inDim) && (player.online() || ModClient.CONFIG.style.offlinePlayers) && !this.hideDecorations) {
@@ -134,28 +149,52 @@ public class MinimapOverlay implements HudElement {
 			double playerScreenY = this.renderToScreen(this.worldZToRenderY(dimZ));
 			double clampedX = this.clampScreenX(playerScreenX);
 			double clampedY = this.clampScreenY(playerScreenY);
-			context.pose().pushMatrix();
+			guiGraphics.pose().pushMatrix();
 			boolean clipped = clampedX != playerScreenX || clampedY != playerScreenY;
-			context.pose().translate((float)clampedX, (float)clampedY);
+			translate(guiGraphics, (float)clampedX, (float)clampedY);
 			int tint = !player.online() ? 77 : (255);
-			int argb = ARGB.color(255, (friend ? 0 : 255) * tint / 255, (inDim ? 255 : 204) * tint / 255, (friend ? 76 : 255) * tint / 255);
+			int argb = color(255, (friend ? 0 : 255) * tint / 255, (inDim ? 255 : 204) * tint / 255, (friend ? 76 : 255) * tint / 255);
 			if (!(Math.abs(playerScreenX - clampedX) > (double)this.width()) && !(Math.abs(playerScreenY - clampedY) > (double)this.height())) {
 				if (clipped) {
-					context.pose().translate(-3.0F, -3.0F);
-					context.blit(RenderPipelines.GUI_TEXTURED, Identifier.withDefaultNamespace("textures/map/decorations/player_off_map.png"), 0, 0, 1.0F, 1.0F, 6, 6, 6, 6, 8, 8, argb);
+					translate(guiGraphics,-3.0F, -3.0F);
+					OverlayHelpers.blit(
+							guiGraphics,
+							Identifier.withDefaultNamespace("textures/map/decorations/player_off_map.png"), 0, 0, 1.0F, 1.0F, 6, 6, 6, 6, 8, 8, argb);
 				} else {
 					float playerRotation = (float)Math.round(player.yaw() / 360.0F * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360.0F;
-					context.pose().rotate((float)Math.toRadians(180.0F + playerRotation));
-					context.pose().translate(-2.5F, -3.5F);
-					context.blit(RenderPipelines.GUI_TEXTURED, Identifier.withDefaultNamespace("textures/map/decorations/player.png"), 0, 0, 2.0F, 0.0F, 5, 7, 5, 7, 8, 8, argb);
+					//? if >1.21.2 {
+					guiGraphics.pose().rotate((float)Math.toRadians(180.0F + playerRotation));
+					//?} else {
+					/*guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(180.0F + playerRotation));
+					*///?}
+					translate(guiGraphics, -2.5F, -3.5F);
+					OverlayHelpers.blit(
+							guiGraphics,
+							Identifier.withDefaultNamespace("textures/map/decorations/player.png"), 0, 0, 2.0F, 0.0F, 5, 7, 5, 7, 8, 8, argb);
 				}
 			} else {
-				context.pose().translate(-2.0F, -2.0F);
-				context.blit(RenderPipelines.GUI_TEXTURED, Identifier.withDefaultNamespace("textures/map/decorations/player_off_limits.png"), 0, 0, 2.0F, 2.0F, 4, 4, 4, 4, 8, 8, argb);
+				translate(guiGraphics, -2.0F, -2.0F);
+				OverlayHelpers.blit(
+						guiGraphics,
+						Identifier.withDefaultNamespace("textures/map/decorations/player_off_limits.png"), 0, 0, 2.0F, 2.0F, 4, 4, 4, 4, 8, 8, argb);
 			}
 
-			context.pose().popMatrix();
+			guiGraphics.pose().popMatrix();
 		}
+	}
+
+	private void translate(GuiGraphicsExtractor guiGraphics, float x, float y) {
+		guiGraphics.pose().translate(x, y
+		//? if <1.21.2
+				//,0
+		);
+	}
+
+	private void scale(GuiGraphicsExtractor guiGraphics, float x, float y) {
+		guiGraphics.pose().scale(x, y
+				//? if <1.21.2
+				//,0
+		);
 	}
 
 	private void renderLandmark(GuiGraphicsExtractor guiGraphics, Landmark landmark, float scaleFactor) {
@@ -164,11 +203,11 @@ public class MinimapOverlay implements HudElement {
 			if (pos == null) {
 				Set<ChunkPos> chunks = RegionPos.regionsToChunks(landmark.getOrDefault(LandmarkComponentTypes.CHUNKS, new HashMap<>()));
 				guiGraphics.pose().pushMatrix();
-				guiGraphics.pose().scale(scaleFactor, scaleFactor);
+				scale(guiGraphics, scaleFactor, scaleFactor);
 
 				for(ChunkPos chunk : chunks) {
 					guiGraphics.pose().pushMatrix();
-					guiGraphics.pose().translate((float)this.worldXToRenderX(chunk.getMinBlockX()), (float)this.worldZToRenderY(chunk.getMinBlockZ()));
+					translate(guiGraphics, (float)this.worldXToRenderX(chunk.getMinBlockX()), (float)this.worldZToRenderY(chunk.getMinBlockZ()));
 					int color = -16777216 | ColorUtil.applyBrightnessRGB(ColorUtil.Brightness.NORMAL, landmark.getOrDefault(LandmarkComponentTypes.COLOR, 16777215));
 					guiGraphics.fill(0, 0, 16, 16, 1157627903 & color);
 					//? if >26 {
@@ -205,14 +244,16 @@ public class MinimapOverlay implements HudElement {
 				int landmarkColor = landmark.getOrDefault(LandmarkComponentTypes.COLOR, 16777215);
 				int tint = 16777215;
 				guiGraphics.pose().pushMatrix();
-				guiGraphics.pose().translate((float)landmarkScreenX, (float)landmarkScreenY);
+				translate(guiGraphics, (float)landmarkScreenX, (float)landmarkScreenY);
 
 				if (landmarkScreenX < width() && landmarkScreenY < height() && landmarkScreenX > 0 && landmarkScreenY > 0) {
 					if (landmark.contains(LandmarkComponentTypes.STACK) && !landmark.get(LandmarkComponentTypes.STACK).isEmpty()) {
 						ItemStack stack = landmark.get(LandmarkComponentTypes.STACK);
 						guiGraphics.fakeItem(stack, -8, -8);
 					} else {
-						guiGraphics.blit(RenderPipelines.GUI_TEXTURED, Identifier.withDefaultNamespace("textures/map/decorations/white_banner.png"), -4, -8, 0.0F, 0.0F, 8, 8, 8, 8, 8, 8, -16777216 | ColorUtil.tint(landmarkColor, tint));
+						OverlayHelpers.blit(
+								guiGraphics,
+								Identifier.withDefaultNamespace("textures/map/decorations/white_banner.png"), -4, -8, 0.0F, 0.0F, 8, 8, 8, 8, 8, 8, -16777216 | ColorUtil.tint(landmarkColor, tint));
 					}
 				}
 

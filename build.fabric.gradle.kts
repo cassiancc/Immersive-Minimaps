@@ -126,6 +126,7 @@ dependencies {
     // McQoy
     modImplementation("dev.isxander:yet-another-config-lib:${property("deps.yacl")}")
     modImplementation("maven.modrinth:mcqoy:${property("deps.mcqoy")}")
+    implementation("org.jspecify:jspecify:1.0.0")
 
 }
 
@@ -147,6 +148,14 @@ stonecutter {
     replacements.string {
         direction = eval(current.version, ">26")
         replace("guiGraphics.renderFakeItem", "guiGraphics.fakeItem")
+    }
+    replacements.string {
+        direction = eval(current.version, ">1.21.2")
+        replace("pushPose", "pushMatrix")
+    }
+    replacements.string {
+        direction = eval(current.version, ">1.21.2")
+        replace("popPose", "popMatrix")
     }
 }
 
