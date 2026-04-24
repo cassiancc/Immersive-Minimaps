@@ -26,7 +26,7 @@ public class ModConfig extends WrappedConfig {
 	public boolean moved_by_effects = true;
 	public boolean hide_from_debug = true;
 	public boolean search_containers_for_containers = true;
-	public ValueList<String> items = ValueList.create("minecraft:map");
+	public ValueList<String> items = ValueList.create("", "minecraft:map");
 	public boolean require_item = true;
 	public boolean search_containers = true;
 	public int defaultScale = -1;

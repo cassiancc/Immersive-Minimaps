@@ -13,14 +13,11 @@ import garden.hestia.hoofprint.HoofprintMapStorage;
 import java.util.*;
 
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ARGB;
@@ -28,10 +25,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.border.WorldBorder;
-import org.apache.commons.lang3.text.WordUtils;
 
 public class MinimapOverlay implements HudElement {
 	public static final Identifier BACKGROUND = ModClient.locate("background");
@@ -48,7 +42,6 @@ public class MinimapOverlay implements HudElement {
 	private final Minecraft minecraft = Minecraft.getInstance();
 	private final int width = 93;
 	private final int height = 93;
-	private Font font = Minecraft.getInstance().font;
 	public static MinimapOverlay INSTANCE = new MinimapOverlay();
 
 
@@ -120,22 +113,10 @@ public class MinimapOverlay implements HudElement {
 		}
 
 		SurveyorClient.getFriends().forEach((uuidx, playerx) -> this.renderPlayer(guiGraphics, playerx, uuidx));
-		this.renderOffscreenMapArrow(guiGraphics);
 		try { // FIXME
 			mapStorage.landmarks.values().forEach((landmarkx) -> this.renderLandmark(guiGraphics, landmarkx, scaleFactor));
 		}
 		catch (Exception ignored) {}
-
-
-//		if (!mapStorage.terrainQueue.isEmpty()) {
-//			int var10003 = this.cursorFrame / 8;
-//			guiGraphics.drawString(this.font, Component.literal("Loading" + ".".repeat(var10003 % 4)).withStyle(ChatFormatting.GRAY), this.width - this.font.width(Component.literal("Loading...")), this.height - 10, -1, false);
-//		}
-
-		if (this.switchFade > 0.0F) {
-			guiGraphics.drawString(this.font, Component.literal(WordUtils.capitalizeFully(this.dim.identifier().getPath().replaceAll("[/_-]", " "))).withStyle(ChatFormatting.WHITE), 0, this.height - 10, ARGB.color(Math.min(255, (int)((double)(255.0F * this.switchFade) / (double)5.0F)), 255, 255, 255), true);
-		}
-
 	}
 
 	private void renderPlayer(GuiGraphics context, PlayerSummary player, UUID uuid) {
@@ -171,37 +152,6 @@ public class MinimapOverlay implements HudElement {
 
 			context.pose().popMatrix();
 		}
-	}
-
-	private void renderOffscreenMapArrow(GuiGraphics context) {
-		WorldBorder worldBorder = this.minecraft.level.getWorldBorder();
-		double size = worldBorder.getSize();
-		HoofprintMapStorage mapStorage = mapStorage();
-		double mapX = this.mapCentreX(worldBorder, mapStorage, size);
-		double mapY = this.mapCentreY(worldBorder, mapStorage, size);
-		double mapBorderX1 = this.mapBorderX1(worldBorder, mapStorage, size);
-		double mapBorderX2 = this.mapBorderX2(worldBorder, mapStorage, size);
-		double mapBorderZ1 = this.mapBorderZ1(worldBorder, mapStorage, size);
-		double mapBorderZ2 = this.mapBorderZ2(worldBorder, mapStorage, size);
-		double arrowX = Mth.clamp(mapX, 8.0F, this.width - 8);
-		double arrowY = Mth.clamp(mapY, 8.0F, this.height - 8);
-		boolean mapOffscreen = mapBorderX2 < (double)0.0F || mapBorderX1 > (double)this.width || mapBorderZ2 < (double)0.0F || mapBorderZ1 > (double)this.height;
-		if (mapOffscreen) {
-			double yFromCentre = mapY - (double)this.height / (double)2.0F;
-			double xFromCentre = mapX - (double)this.width / (double)2.0F;
-			double angle = Math.acos(-yFromCentre / Math.sqrt(xFromCentre * xFromCentre + yFromCentre * yFromCentre));
-			if (mapX < (double)this.width / (double)2.0F) {
-				angle = (Math.PI * 2D) - angle;
-			}
-
-			context.pose().pushMatrix();
-			context.pose().translate((float)arrowX, (float)arrowY);
-			context.pose().rotate((float)(Math.PI + angle));
-			context.pose().translate(-3.5F, -4.0F);
-			context.blit(RenderPipelines.GUI_TEXTURED, Identifier.withDefaultNamespace("textures/map/decorations/target_point.png"), 0, 0, 1.0F, 0.0F, 7, 8, 7, 8, 8, 8);
-			context.pose().popMatrix();
-		}
-
 	}
 
 	private void renderLandmark(GuiGraphics guiGraphics, Landmark landmark, float scaleFactor) {
@@ -272,14 +222,20 @@ public class MinimapOverlay implements HudElement {
 	}
 
 	public void init() {
-		this.font = this.minecraft.font;
 		if (guiScale == null)
 			this.guiScale = ModClient.CONFIG.defaultScale < 1 ? (int)Math.ceil((double)this.minecraft.getWindow().getGuiScale() / (ModClient.CONFIG.defaultScale == -1 ? (double)2.0F : (double)1.0F)) : ModClient.CONFIG.defaultScale;
 	}
 
-	public void setScale(int newScale) {
-//		this.guiScale += newScale;
-//		System.out.println(guiScale);
+	public void zoomOut() {
+		if (guiScale > 1) {
+			this.guiScale -= 1;
+		}
+	}
+
+	public void zoomIn() {
+		if (guiScale < 10) {
+			this.guiScale += 1;
+		}
 	}
 
 	public void tick() {
@@ -351,34 +307,6 @@ public class MinimapOverlay implements HudElement {
 		double minY = Math.min(borderZ2, 0.0F);
 		double maxY = Math.max(borderZ1, this.height);
 		return Mth.clamp(y, minY, maxY);
-	}
-
-	double mapBorderX1(WorldBorder worldBorder, HoofprintMapStorage mapStorage, double size) {
-		return this.renderToScreen(this.worldXToRenderX(Math.max((int)Math.floor(worldBorder.getCenterX() - size / (double)2.0F), mapStorage.minBlockX)));
-	}
-
-	double mapBorderX2(WorldBorder worldBorder, HoofprintMapStorage mapStorage, double size) {
-		return this.renderToScreen(this.worldXToRenderX(Math.min((int)Math.floor(worldBorder.getCenterX() + size / (double)2.0F), mapStorage.maxBlockX)));
-	}
-
-	double mapBorderZ1(WorldBorder worldBorder, HoofprintMapStorage mapStorage, double size) {
-		return this.renderToScreen(this.worldZToRenderY(Math.max((int)Math.floor(worldBorder.getCenterZ() - size / (double)2.0F), mapStorage.minBlockZ)));
-	}
-
-	double mapBorderZ2(WorldBorder worldBorder, HoofprintMapStorage mapStorage, double size) {
-		return this.renderToScreen(this.worldZToRenderY(Math.min((int)Math.floor(worldBorder.getCenterZ() + size / (double)2.0F), mapStorage.maxBlockZ)));
-	}
-
-	double mapCentreX(WorldBorder worldBorder, HoofprintMapStorage mapStorage, double size) {
-		double borderX1 = this.mapBorderX1(worldBorder, mapStorage, size);
-		double borderX2 = this.mapBorderX2(worldBorder, mapStorage, size);
-		return borderX1 + (borderX2 - borderX1) / (double)2.0F;
-	}
-
-	double mapCentreY(WorldBorder worldBorder, HoofprintMapStorage mapStorage, double size) {
-		double borderZ1 = this.mapBorderZ1(worldBorder, mapStorage, size);
-		double borderZ2 = this.mapBorderZ2(worldBorder, mapStorage, size);
-		return borderZ1 + (borderZ2 - borderZ1) / (double)2.0F;
 	}
 
 	//? if <26 {

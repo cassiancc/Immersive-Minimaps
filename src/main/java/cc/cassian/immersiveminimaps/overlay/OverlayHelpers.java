@@ -1,9 +1,6 @@
 package cc.cassian.immersiveminimaps.overlay;
 
 import cc.cassian.immersiveminimaps.ModClient;
-import cc.cassian.immersiveminimaps.config.ModConfig;
-import cc.cassian.immersiveminimaps.helpers.ModLists;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.core.component.DataComponents;
@@ -218,17 +215,14 @@ public class OverlayHelpers {
 	static boolean hasBeenToggled = false;
 
 	public static void checkKeybind() {
-		if (!hasBeenToggled) {
-			if (ModClient.zoomIn.isDown()) {
-				MinimapOverlay.INSTANCE.setScale(1);
-				hasBeenToggled = true;
-			}
-			else if (ModClient.zoomOut.isDown()) {
-				MinimapOverlay.INSTANCE.setScale(-1);
-				hasBeenToggled = true;
-			} else {
-				hasBeenToggled = false;
-			}
+		if (ModClient.zoomIn.isDown() && !hasBeenToggled) {
+			MinimapOverlay.INSTANCE.zoomIn();
+			hasBeenToggled = true;
+		} else if (ModClient.zoomOut.isDown() && !hasBeenToggled) {
+			MinimapOverlay.INSTANCE.zoomOut();
+			hasBeenToggled = true;
+		} else {
+			hasBeenToggled = false;
 		}
 	}
 }
