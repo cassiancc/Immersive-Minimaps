@@ -26,25 +26,28 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.border.WorldBorder;
+import org.jspecify.annotations.Nullable;
 
 public class MinimapOverlay implements HudElement {
 	public static final Identifier BACKGROUND = ModClient.locate("background");
+	public static boolean showMinimap;
 	private final float PLAYER_ROTATION_STEPS = 16.0F;
 	private final int PADDING = 8;
 	private double centreX = 0.0F;
 	private double centreZ = 0.0F;
-	private Integer guiScale = null;
+	private @Nullable Integer guiScale = null;
 	private final boolean caveMode = false;
 	private final boolean hideDecorations = false;
 	private int cursorFrame = 0;
-	private ResourceKey<Level> dim;
-	private final Minecraft minecraft = Minecraft.getInstance();
-	private final int width = 93;
-	private final int height = 93;
+	private @Nullable ResourceKey<Level> dim;
+	private final Minecraft mc = Minecraft.getInstance();
+	private final int width = 92;
+	private final int height = 92;
 	public static MinimapOverlay INSTANCE = new MinimapOverlay();
 
 
 	public void extractRenderState(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
+		if (OverlayHelpers.shouldCancelRender(mc) || !showMinimap) return;
 		if (ModClient.CONFIG.style.draw_background) {
 			guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND, 2, 2, width+5, height+5);
 		}
@@ -52,7 +55,7 @@ public class MinimapOverlay implements HudElement {
 		guiGraphics.pose().pushMatrix();
 		float scaleFactor = this.getScaleFactor();
 		guiGraphics.pose().scale(scaleFactor, scaleFactor);
-		WorldBorder worldBorder = this.minecraft.level.getWorldBorder();
+		WorldBorder worldBorder = this.mc.level.getWorldBorder();
 		double size = worldBorder.getSize();
 		int borderX1 = Math.max((int)Math.floor(worldBorder.getCenterX() - size / (double)2.0F), mapStorage.minBlockX);
 		int borderX2 = Math.min((int)Math.ceil(worldBorder.getCenterX() + size / (double)2.0F), mapStorage.maxBlockX);
@@ -101,7 +104,7 @@ public class MinimapOverlay implements HudElement {
 						double landmarkCenterX = this.renderToScreen(this.worldXToRenderX(pos.getX()));
 						double landmarkCenterY = this.renderToScreen(this.worldZToRenderY(pos.getZ()));
 						double mouseDistance = (0 - landmarkCenterX) * (0 - landmarkCenterX) + (0 - landmarkCenterY) * (0 - landmarkCenterY);
-						if (mouseDistance < (double) (36 * this.minecraft.getWindow().getGuiScale()) && mouseDistance < bestDistance) {
+						if (mouseDistance < (double) (36 * this.mc.getWindow().getGuiScale()) && mouseDistance < bestDistance) {
 							bestDistance = mouseDistance;
 						}
 					}
@@ -110,10 +113,9 @@ public class MinimapOverlay implements HudElement {
 		}
 
 		SurveyorClient.getFriends().forEach((uuidx, playerx) -> this.renderPlayer(guiGraphics, playerx, uuidx));
-		try { // FIXME
+		try {
 			mapStorage.landmarks.values().forEach((landmarkx) -> this.renderLandmark(guiGraphics, landmarkx, scaleFactor));
-		}
-		catch (Exception ignored) {}
+		} catch (Exception ignored) {} // threw exception on toybox map, unsure how to recreate and low priority
 	}
 
 	private void renderPlayer(GuiGraphicsExtractor context, PlayerSummary player, UUID uuid) {
@@ -220,25 +222,25 @@ public class MinimapOverlay implements HudElement {
 
 	public void init() {
 		if (guiScale == null)
-			this.guiScale = ModClient.CONFIG.defaultScale < 1 ? (int)Math.ceil((double)this.minecraft.getWindow().getGuiScale() / (ModClient.CONFIG.defaultScale == -1 ? (double)2.0F : (double)1.0F)) : ModClient.CONFIG.defaultScale;
+			this.guiScale = ModClient.CONFIG.defaultScale < 1 ? (int)Math.ceil((double)this.mc.getWindow().getGuiScale() / (ModClient.CONFIG.defaultScale == -1 ? (double)2.0F : (double)1.0F)) : ModClient.CONFIG.defaultScale;
 	}
 
 	public void zoomOut() {
-		if (guiScale > 1) {
-			this.guiScale -= 1;
-		}
+		setGuiScale(this.guiScale -= 1);
 	}
 
 	public void zoomIn() {
-		if (guiScale < 10) {
-			this.guiScale += 1;
-		}
+		setGuiScale(this.guiScale += 1);
+	}
+
+	private void setGuiScale(Integer newGuiScale) {
+		guiScale = Mth.clamp(newGuiScale, 1, 5);
 	}
 
 	public void tick() {
 		this.cursorFrame = (this.cursorFrame + 1) % 40;
-		this.centreX = this.minecraft.player.getBlockX();
-		this.centreZ = this.minecraft.player.getBlockZ();
+		this.centreX = this.mc.player.getBlockX();
+		this.centreZ = this.mc.player.getBlockZ();
 	}
 
 	public void changeDim(ResourceKey<Level> newDim) {
@@ -247,15 +249,25 @@ public class MinimapOverlay implements HudElement {
 	}
 
 	double worldXToRenderX(double worldX) {
-		return (double)this.getWidth() / (double)2.0F + worldX - this.centreX+ PADDING;
+		return (double)this.getWidth() / (double)2.0F + worldX - this.centreX + PADDING + getGuiOffset();
 	}
 
 	double worldZToRenderY(double worldZ) {
-		return (double)this.getHeight() / (double)2.0F + worldZ - this.centreZ+PADDING;
+		return (double)this.getHeight() / (double)2.0F + worldZ - this.centreZ +PADDING + getGuiOffset();
 	}
 
 	double screenXToWorldX(double screenX) {
 		return screenX / (double)this.getScaleFactor() + this.centreX - (double)this.getWidth() / (double)2.0F;
+	}
+
+	private int getGuiOffset() {
+		return switch (guiScale) {
+			case 1 -> 8;
+			case 3 -> -2;
+			case 4 -> -3;
+			case 5 -> -4;
+			case null, default -> 0;
+		};
 	}
 
 	double screenYToWorldZ(double screenY) {
@@ -272,36 +284,36 @@ public class MinimapOverlay implements HudElement {
 
 	float getScaleFactor() {
 		float guiScale = Objects.requireNonNullElse(this.guiScale, 1);
-		return guiScale / (float)this.minecraft.getWindow().getGuiScale();
+		return guiScale / (float)this.mc.getWindow().getGuiScale();
 	}
 
 	float getWidth() {
-		return (float)this.width / this.getScaleFactor();
+		return ((float)this.width / this.getScaleFactor());
 	}
 
 	float getHeight() {
-		return (float)this.height / this.getScaleFactor();
+		return ((float)this.height / this.getScaleFactor());
 	}
 
 	double clampScreenX(double x) {
-		WorldBorder worldBorder = this.minecraft.level.getWorldBorder();
+		WorldBorder worldBorder = this.mc.level.getWorldBorder();
 		double size = worldBorder.getSize();
 		HoofprintMapStorage mapStorage = mapStorage();
 		double borderX1 = this.renderToScreen(this.worldXToRenderX(Math.max((int)Math.floor(worldBorder.getCenterX() - size / (double)2.0F), mapStorage.minBlockX)));
 		double borderX2 = this.renderToScreen(this.worldXToRenderX(Math.min((int)Math.ceil(worldBorder.getCenterX() + size / (double)2.0F), mapStorage.maxBlockX)));
 		double minX = Math.min(borderX2, 0.0F);
-		double maxX = Math.max(borderX1, this.width);
+		double maxX = Math.max(borderX1, width);
 		return Mth.clamp(x, minX, maxX);
 	}
 
 	double clampScreenY(double y) {
-		WorldBorder worldBorder = this.minecraft.level.getWorldBorder();
+		WorldBorder worldBorder = this.mc.level.getWorldBorder();
 		double size = worldBorder.getSize();
 		HoofprintMapStorage mapStorage = mapStorage();
 		double borderZ1 = this.renderToScreen(this.worldZToRenderY(Math.max((int)Math.floor(worldBorder.getCenterZ() - size / (double)2.0F), mapStorage.minBlockZ)));
 		double borderZ2 = this.renderToScreen(this.worldZToRenderY(Math.min((int)Math.ceil(worldBorder.getCenterZ() + size / (double)2.0F), mapStorage.maxBlockZ)));
 		double minY = Math.min(borderZ2, 0.0F);
-		double maxY = Math.max(borderZ1, this.height);
+		double maxY = Math.max(borderZ1, height);
 		return Mth.clamp(y, minY, maxY);
 	}
 

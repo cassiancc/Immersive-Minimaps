@@ -1,6 +1,7 @@
 package cc.cassian.immersiveminimaps.overlay;
 
 import cc.cassian.immersiveminimaps.ModClient;
+import cc.cassian.immersiveminimaps.helpers.ModLists;
 import net.minecraft.world.item.component.BundleContents;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.core.component.DataComponents;
@@ -16,7 +17,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -79,13 +80,13 @@ public class OverlayHelpers {
 		if (itemStack.isEmpty())
 			return;
 		var item = itemStack.getItem();
-//		if (ModLists.items.contains(item))
-//			MinimapOverlay.show = true;
+		if (ModLists.items.contains(item))
+			MinimapOverlay.showMinimap = true;
 	}
 
-	public static void checkInventoryForItems(Player player) {
+	public static void checkInventoryForItems(@Nullable Player player) {
 		if (CONFIG.require_item) {
-			setOverlays(false);
+			MinimapOverlay.showMinimap = false;
 			if (player == null)
 				return;
 			isImportantItemOrContainer(player.getOffhandItem());
@@ -94,12 +95,8 @@ public class OverlayHelpers {
 			}
 			checkInventoryForStack(player.getInventory());
 		} else {
-			setOverlays(true);
+			MinimapOverlay.showMinimap = true;
 		}
-	}
-
-	private static void setOverlays(boolean b) {
-//		MinimapOverlay.show = b;
 	}
 
 	public static void isImportantItemOrContainer(ItemStack stack) {
@@ -144,11 +141,6 @@ public class OverlayHelpers {
 		return true;
 	}
 
-	public static boolean checkInventoryForItem(Inventory inventory, Item item, boolean value) {
-		if (value) return true;
-		else return checkInventoryForStack(inventory, item) != ItemStack.EMPTY;
-	}
-
 	public static void checkInventoryForStack(Inventory inventory) {
 		for (ItemStack stack :
 				inventory.getNonEquipmentItems()
@@ -160,23 +152,6 @@ public class OverlayHelpers {
 		}
 	}
 
-	public static @NotNull ItemStack checkInventoryForStack(Inventory inventory, Item item) {
-		for (ItemStack stack : inventory.getNonEquipmentItems()
-		) {
-			if (stack.is(item)) return stack;
-			else if (item != null && stack.is(item))
-				return stack;
-			else if (isContainer(stack)) {
-				List<ItemStack> contents = getContainerContents(stack).toList();
-				for (ItemStack content : contents) {
-					if (item != null && content.is(item))
-						return content;
-				}
-			}
-		}
-		return ItemStack.EMPTY;
-	}
-
 	public static int getPlacement(int windowWidth, int fontWidth, boolean leftAlign) {
 		if (leftAlign) {
 			return 9;
@@ -184,7 +159,6 @@ public class OverlayHelpers {
 			return windowWidth-2-fontWidth;
 		}
 	}
-
 
 	public static void drawString(GuiGraphicsExtractor guiGraphics, Font font, Component text, int x, int y, Integer color) {
 		color = ARGB.opaque(color);

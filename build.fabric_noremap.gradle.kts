@@ -129,7 +129,7 @@ dependencies {
     implementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
     implementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
 
-    compileOnly("com.terraformersmc:modmenu:${property("deps.modmenu")}")
+    implementation("com.terraformersmc:modmenu:${property("deps.modmenu")}")
 
     implementation("maven.modrinth:surveyor:${property("deps.surveyor")}")
     implementation("maven.modrinth:hoofprint:${property("deps.hoofprint")}")
