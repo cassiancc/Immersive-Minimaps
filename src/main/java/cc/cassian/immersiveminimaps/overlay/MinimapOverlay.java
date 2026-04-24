@@ -3,7 +3,6 @@ package cc.cassian.immersiveminimaps.overlay;
 
 import cc.cassian.immersiveminimaps.ModClient;
 import cc.cassian.immersiveminimaps.helpers.ColorUtil;
-import folk.sisby.surveyor.PlayerSummary;
 import folk.sisby.surveyor.client.SurveyorClient;
 import folk.sisby.surveyor.landmark.Landmark;
 import folk.sisby.surveyor.landmark.component.LandmarkComponentTypes;
@@ -27,10 +26,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.border.WorldBorder;
+import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class MinimapOverlay {
 	public static final Identifier BACKGROUND = ModClient.locate("background");
+	public static final Identifier FRAME = ModClient.locate("frame");
 	public static boolean showMinimap;
 	private final float PLAYER_ROTATION_STEPS = 16.0F;
 	private double centreX = 0.0F;
@@ -115,10 +116,18 @@ public class MinimapOverlay {
 			}
 		}
 
-		SurveyorClient.getFriends().forEach((uuidx, playerx) -> this.renderPlayer(guiGraphics, playerx, uuidx));
+//		SurveyorClient.getFriends().forEach((uuidx, playerx) -> this.renderPlayer(guiGraphics, playerx.online(), playerx.yaw(), playerx.pos(), playerx.dimension(), uuidx));
+		var player = mc.player;
+		this.renderPlayer(guiGraphics, true, player.getYRot(), player.position(), player.level().dimension(), SurveyorClient.getClientUuid());
 		try {
 			mapStorage.landmarks.values().forEach((landmarkx) -> this.renderLandmark(guiGraphics, landmarkx, scaleFactor));
 		} catch (Exception ignored) {} // threw exception on toybox map, unsure how to recreate and low priority
+		if (ModClient.CONFIG.style.draw_background) {
+			guiGraphics.blitSprite(
+					//? if >1.21.2
+					RenderPipelines.GUI_TEXTURED,
+					FRAME, OverlayHelpers.getPlacement(mc.getWindow().getGuiScaledWidth(), width(), ModClient.CONFIG.left_align), 2, width()+5, height()+5);
+		}
 	}
 
 	private int width() {
@@ -129,30 +138,27 @@ public class MinimapOverlay {
 		return ModClient.CONFIG.size;
 	}
 
-	private void renderPlayer(GuiGraphicsExtractor guiGraphics, PlayerSummary player, UUID uuid) {
+	private void renderPlayer(GuiGraphicsExtractor guiGraphics, boolean online, float yaw, Vec3 pos, ResourceKey<Level> dimension, UUID uuid) {
 		boolean friend = !SurveyorClient.getClientUuid().equals(uuid);
-		boolean inDim = player.dimension().equals(this.dim);
-		if ((!friend || inDim) && (player.online() || ModClient.CONFIG.style.offlinePlayers) && !this.hideDecorations) {
-			double dimX = player.pos().x();
-			double dimZ = player.pos().z();
-
+		boolean inDim = dimension.equals(this.dim);
+		if ((!friend || inDim) && (online || ModClient.CONFIG.style.offlinePlayers) && !this.hideDecorations) {
+			double dimX = pos.x();
+			double dimZ = pos.z();
 			double playerScreenX = this.renderToScreen(this.worldXToRenderX(dimX));
 			double playerScreenY = this.renderToScreen(this.worldZToRenderY(dimZ));
-			double clampedX = this.clampScreenX(playerScreenX);
-			double clampedY = this.clampScreenY(playerScreenY);
 			guiGraphics.pose().pushMatrix();
-			boolean clipped = clampedX != playerScreenX || clampedY != playerScreenY;
-			translate(guiGraphics, (float)clampedX, (float)clampedY);
-			int tint = !player.online() ? 77 : (255);
+			boolean clipped = playerScreenX != playerScreenX || playerScreenY != playerScreenY;
+			translate(guiGraphics, (float)playerScreenX, (float)playerScreenY);
+			int tint = !online ? 77 : (255);
 			int argb = color(255, (friend ? 0 : 255) * tint / 255, (inDim ? 255 : 204) * tint / 255, (friend ? 76 : 255) * tint / 255);
-			if (!(Math.abs(playerScreenX - clampedX) > (double)this.width()) && !(Math.abs(playerScreenY - clampedY) > (double)this.height())) {
+			if (!(Math.abs(playerScreenX - playerScreenX) > (double)this.width()) && !(Math.abs(playerScreenY - playerScreenY) > (double)this.height())) {
 				if (clipped) {
 					translate(guiGraphics,-3.0F, -3.0F);
 					OverlayHelpers.blit(
 							guiGraphics,
 							Identifier.withDefaultNamespace("textures/map/decorations/player_off_map.png"), 0, 0, 1.0F, 1.0F, 6, 6, 6, 6, 8, 8, argb);
 				} else {
-					float playerRotation = (float)Math.round(player.yaw() / 360.0F * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360.0F;
+					float playerRotation = (float)Math.round(yaw / 360.0F * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360.0F;
 					//? if >1.21.2 {
 					guiGraphics.pose().rotate((float)Math.toRadians(180.0F + playerRotation));
 					//?} else {
@@ -286,34 +292,49 @@ public class MinimapOverlay {
 	}
 
 	double worldXToRenderX(double worldX) {
-		return (double)this.getWidth() / (double)2.0F + worldX - this.centreX + 8 + getGuiOffset(!ModClient.CONFIG.left_align);
+		return (double)this.getWidth() / (double)2.0F + worldX - this.centreX + getXOffset(mc.getWindow().getWidth());
 	}
 
 	double worldZToRenderY(double worldZ) {
-		return (double)this.getHeight() / (double)2.0F + worldZ - this.centreZ + 8 + getGuiOffset(false);
+		return (double)this.getHeight() / (double)2.0F + worldZ - this.centreZ + getYOffset(mc.getWindow().getHeight(), mc.getWindow().getGuiScaledHeight());
 	}
 
 	double screenXToWorldX(double screenX) {
 		return screenX / (double)this.getScaleFactor() + this.centreX - (double)this.getWidth() / (double)2.0F;
 	}
 
-	private int getGuiOffset(boolean b) {
-		int i = switch (guiScale) {
-			case 1 -> 8;
-			case 3 -> -2;
-			case 4 -> -3;
-			case 5 -> -4;
+	private int getXOffset(int window) {
+		int i = (int) switch (guiScale) {
+			case 1 -> window/guiScale/100;
+			case 2 -> window/guiScale/91;
+			case 3 -> window/guiScale/90;
+			case 4 -> window/guiScale/85;
+			case 5 -> window/guiScale/84;
 			case null, default -> 0;
 		};
-		if (b) {
-			i += rightAlign();
+		ModClient.LOGGER.info("GUI: %d. Window: %d. Offset: %d".formatted(guiScale, window, i));
+		if (!ModClient.CONFIG.left_align) {
+			i += rightAlign(i);
 		}
 		return i;
 	}
 
-	private int rightAlign() {
+	private int getYOffset(int window, int guiScaledHeight) {
+		int i = (int) switch (guiScale) {
+			case 1 -> window/guiScale/53;
+			case 2 -> window/guiScale/53;
+			case 3 -> window/guiScale/53;
+			case 4 -> window/guiScale/53;
+			case 5 -> window/guiScale/52;
+			case null, default -> 0;
+		};
+//		ModClient.LOGGER.info("GUI: %d. Window: %d. Offset: %d".formatted(guiScale, window, i));
+		return i;
+	}
+
+	private int rightAlign(int i) {
 		int windowWidth = mc.getWindow().getWidth();
-		return(int) ((windowWidth -(windowWidth /4.9))/guiScale);
+		return (windowWidth-width()-8)/guiScale;
 	}
 
 	double screenYToWorldZ(double screenY) {
