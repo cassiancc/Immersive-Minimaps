@@ -68,7 +68,7 @@ public class OverlayHelpers {
 	private static void findImportantContainerContents(ItemStack container) {
 		List<ItemStack> list = getContainerContents(container).toList();
 		for (ItemStack itemStack : list) {
-			if (CONFIG.search_containers_for_containers) {
+			if (CONFIG.requirements.search_containers_for_containers) {
 				isImportantItemOrContainer(itemStack);
 			} else {
 				isImportantItem(itemStack);
@@ -85,7 +85,7 @@ public class OverlayHelpers {
 	}
 
 	public static void checkInventoryForItems(@Nullable Player player) {
-		if (CONFIG.require_item) {
+		if (CONFIG.requirements.require_item) {
 			MinimapOverlay.showMinimap = false;
 			if (player == null)
 				return;
@@ -129,7 +129,7 @@ public class OverlayHelpers {
 	}
 
 	public static boolean isContainer(ItemStack stack) {
-		if (!CONFIG.search_containers) return false;
+		if (!CONFIG.requirements.search_containers) return false;
 		if (stack.isEmpty()) return false;
 		var components = stack.getComponents();
 		if (components.has(DataComponents.BUNDLE_CONTENTS)) {
@@ -154,7 +154,7 @@ public class OverlayHelpers {
 
 	public static int getPlacement(int windowWidth, int fontWidth, boolean leftAlign) {
 		if (leftAlign) {
-			return 9;
+			return 10;
 		} else {
 			return windowWidth-2-fontWidth;
 		}

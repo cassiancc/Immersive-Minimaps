@@ -17,7 +17,7 @@ public class ModLists {
 
 	public static void loadLists() {
 		var registry = BuiltInRegistries.ITEM;
-		addAll(registry, CONFIG.items, items);
+		addAll(registry, CONFIG.requirements.items, items);
 	}
 	/**
 	 * @param registry The registry to check - usually {@link BuiltInRegistries#ITEM}
