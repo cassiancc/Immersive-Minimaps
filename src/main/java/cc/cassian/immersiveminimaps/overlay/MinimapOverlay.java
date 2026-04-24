@@ -9,12 +9,9 @@ import folk.sisby.surveyor.landmark.Landmark;
 import folk.sisby.surveyor.landmark.component.LandmarkComponentTypes;
 import folk.sisby.surveyor.util.RegionPos;
 import garden.hestia.hoofprint.HoofprintMapStorage;
-
 import java.util.*;
 //? if >1.21.2 {
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.minecraft.client.renderer.RenderPipelines;
-
 import static net.minecraft.util.ARGB.color;
 //?} else {
 /*import static net.minecraft.util.FastColor.ABGR32.color;
@@ -32,11 +29,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.border.WorldBorder;
 import org.jspecify.annotations.Nullable;
 
-
-public class MinimapOverlay
-		//? if >1.21.2
-		implements HudElement
-{
+public class MinimapOverlay {
 	public static final Identifier BACKGROUND = ModClient.locate("background");
 	public static boolean showMinimap;
 	private final float PLAYER_ROTATION_STEPS = 16.0F;
@@ -369,10 +362,4 @@ public class MinimapOverlay
 		double maxY = Math.max(borderZ1, height());
 		return Mth.clamp(y, minY, maxY);
 	}
-
-	//? if <26 {
-	/*public void render(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
-		extractRenderState(guiGraphics, deltaTracker);
-	}
-	*///?}
 }

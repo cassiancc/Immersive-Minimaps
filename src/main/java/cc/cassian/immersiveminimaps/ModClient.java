@@ -66,9 +66,9 @@ public class ModClient implements ClientModInitializer {
 		ClientLifecycleEvents.CLIENT_STARTED.register((client -> ModLists.loadLists()));
 		CONFIG.registerCallback(config -> ModLists.loadLists());
 		//? if >1.21.2 {
-		HudElementRegistry.addFirst(ModClient.locate("minimap"), MinimapOverlay.INSTANCE);
+		HudElementRegistry.addFirst(ModClient.locate("minimap"), MinimapOverlay.INSTANCE::extractRenderState);
 		//?} else {
-		/*HudRenderCallback.EVENT.register(MinimapOverlay.INSTANCE::render);
+		/*HudRenderCallback.EVENT.register(MinimapOverlay.INSTANCE::extractRenderState);
 		*///?}
 		//? if <26 {
 		/*KeyBindingHelper.registerKeyBinding(ModClient.zoomIn);
