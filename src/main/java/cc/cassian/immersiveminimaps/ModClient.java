@@ -9,7 +9,11 @@ import net.fabricmc.api.ClientModInitializer;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+//? if >26 {
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+//?} else {
+/*import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+*///?}
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
@@ -29,10 +33,10 @@ public class ModClient implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	//? if >1.21.8 {
-	/*public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(locate("keybinds")); // The category translation key used to categorize in the Controls screen
-	 *///?} else {
-	public static final String CATEGORY = "key.category.immersiveminimaps.keybinds";
-	//?}
+	public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(locate("keybinds")); // The category translation key used to categorize in the Controls screen
+	 //?} else {
+	/*public static final String CATEGORY = "key.category.immersiveminimaps.keybinds";
+	*///?}
 
 	// A key mapping with keyboard as the default
 	public static final KeyMapping zoomIn = new KeyMapping(
@@ -56,14 +60,15 @@ public class ModClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		ClientTickEvents.END_CLIENT_TICK.register(ModClient::tick);
 		ClientLifecycleEvents.CLIENT_STARTED.register((client -> ModLists.loadLists()));
+		CONFIG.registerCallback(config -> ModLists.loadLists());
 		HudElementRegistry.addFirst(ModClient.locate("minimap"), MinimapOverlay.INSTANCE);
 		//? if <26 {
-		KeyBindingHelper.registerKeyBinding(ModClient.zoomIn);
+		/*KeyBindingHelper.registerKeyBinding(ModClient.zoomIn);
 		KeyBindingHelper.registerKeyBinding(ModClient.zoomOut);
-		//?} else {
-        /*KeyMappingHelper.registerKeyMapping(ModClient.zoomIn);
+		*///?} else {
+        KeyMappingHelper.registerKeyMapping(ModClient.zoomIn);
         KeyMappingHelper.registerKeyMapping(ModClient.zoomOut);
-        *///?}
+        //?}
 	}
 
 	private static void tick(Minecraft minecraft) {

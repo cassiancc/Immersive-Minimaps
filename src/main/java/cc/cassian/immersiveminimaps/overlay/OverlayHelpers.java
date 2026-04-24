@@ -6,7 +6,7 @@ import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -57,10 +57,10 @@ public class OverlayHelpers {
 		if (mc.options.hideGui) return true;
 		if (!CONFIG.minimap_enable) return true;
 		//? if >26 {
-		/*if (CONFIG.hide_from_debug) {
+		if (CONFIG.hide_from_debug) {
 			return mc.debugEntries.isOverlayVisible();
 		}
-		*///?}
+		//?}
 		return false;
 	}
 
@@ -121,10 +121,10 @@ public class OverlayHelpers {
 			ItemContainerContents containerContents = components.get(DataComponents.CONTAINER);
 			if (containerContents != null) {
 				//? if <26 {
-				return containerContents.stream();
-				//?} else {
-				/*return containerContents.allItemsCopyStream();
-				*///?}
+				/*return containerContents.stream();
+				*///?} else {
+				return containerContents.allItemsCopyStream();
+				//?}
 
 			}
 		}
@@ -186,30 +186,30 @@ public class OverlayHelpers {
 	}
 
 
-	public static void drawString(GuiGraphics guiGraphics, Font font, Component text, int x, int y, Integer color) {
+	public static void drawString(GuiGraphicsExtractor guiGraphics, Font font, Component text, int x, int y, Integer color) {
 		color = ARGB.opaque(color);
-		guiGraphics.drawString(font, text, x, y, color);
+		guiGraphics.text(font, text, x, y, color);
 	}
 
-	public static void drawString(GuiGraphics guiGraphics, Font font, String text, int x, int y, Integer color) {
+	public static void drawString(GuiGraphicsExtractor guiGraphics, Font font, String text, int x, int y, Integer color) {
 		color = ARGB.opaque(color);
-		guiGraphics.drawString(font, text, x, y, color);
+		guiGraphics.text(font, text, x, y, color);
 	}
 
-	public static void blit(GuiGraphics guiGraphics, Identifier texture, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight, int textureWidth, int textureHeight) {
+	public static void blit(GuiGraphicsExtractor guiGraphics, Identifier texture, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight, int textureWidth, int textureHeight) {
 		guiGraphics.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, uOffset, vOffset, uWidth, vHeight, textureWidth, textureHeight);
 	}
 
-	public static void blitSprite(GuiGraphics GuiGraphics, String texture, int x, int y) {
-		blitSprite(GuiGraphics, ModClient.locate("textures/gui/sprites/%s.png".formatted(texture)), x, y);
+	public static void blitSprite(GuiGraphicsExtractor GuiGraphicsExtractor, String texture, int x, int y) {
+		blitSprite(GuiGraphicsExtractor, ModClient.locate("textures/gui/sprites/%s.png".formatted(texture)), x, y);
 	}
 
-	public static void blitSprite(GuiGraphics GuiGraphics, Identifier texture, int x, int y) {
-		blitSprite(GuiGraphics, texture, x, y, 16);
+	public static void blitSprite(GuiGraphicsExtractor GuiGraphicsExtractor, Identifier texture, int x, int y) {
+		blitSprite(GuiGraphicsExtractor, texture, x, y, 16);
 	}
 
-	public static void blitSprite(GuiGraphics GuiGraphics, Identifier texture, int x, int y, int size) {
-		blit(GuiGraphics, texture, x, y, 0, 0, size, size, size, size);
+	public static void blitSprite(GuiGraphicsExtractor GuiGraphicsExtractor, Identifier texture, int x, int y, int size) {
+		blit(GuiGraphicsExtractor, texture, x, y, 0, 0, size, size, size, size);
 	}
 
 	static boolean hasBeenToggled = false;

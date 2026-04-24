@@ -15,7 +15,7 @@ import java.util.*;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
@@ -38,19 +38,16 @@ public class MinimapOverlay implements HudElement {
 	private final boolean hideDecorations = false;
 	private int cursorFrame = 0;
 	private ResourceKey<Level> dim;
-	private float switchFade = 0.0F;
 	private final Minecraft minecraft = Minecraft.getInstance();
 	private final int width = 93;
 	private final int height = 93;
 	public static MinimapOverlay INSTANCE = new MinimapOverlay();
 
 
-	public void extractRenderState(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+	public void extractRenderState(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
 		if (ModClient.CONFIG.style.draw_background) {
 			guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BACKGROUND, 2, 2, width+5, height+5);
 		}
-		var delta = deltaTracker.getGameTimeDeltaTicks();
-		this.switchFade = Math.max(0.0F, this.switchFade - delta);
 		HoofprintMapStorage mapStorage = mapStorage();
 		guiGraphics.pose().pushMatrix();
 		float scaleFactor = this.getScaleFactor();
@@ -119,7 +116,7 @@ public class MinimapOverlay implements HudElement {
 		catch (Exception ignored) {}
 	}
 
-	private void renderPlayer(GuiGraphics context, PlayerSummary player, UUID uuid) {
+	private void renderPlayer(GuiGraphicsExtractor context, PlayerSummary player, UUID uuid) {
 		boolean friend = !SurveyorClient.getClientUuid().equals(uuid);
 		boolean inDim = player.dimension().equals(this.dim);
 		if ((!friend || inDim) && (player.online() || ModClient.CONFIG.style.offlinePlayers) && !this.hideDecorations) {
@@ -154,7 +151,7 @@ public class MinimapOverlay implements HudElement {
 		}
 	}
 
-	private void renderLandmark(GuiGraphics guiGraphics, Landmark landmark, float scaleFactor) {
+	private void renderLandmark(GuiGraphicsExtractor guiGraphics, Landmark landmark, float scaleFactor) {
 		BlockPos pos = landmark.get(LandmarkComponentTypes.POS);
 		if (!this.hideDecorations) {
 			if (pos == null) {
@@ -168,12 +165,12 @@ public class MinimapOverlay implements HudElement {
 					int color = -16777216 | ColorUtil.applyBrightnessRGB(ColorUtil.Brightness.NORMAL, landmark.getOrDefault(LandmarkComponentTypes.COLOR, 16777215));
 					guiGraphics.fill(0, 0, 16, 16, 1157627903 & color);
 					//? if >26 {
-					/*int x = chunk.x();
+					int x = chunk.x();
 					int z = chunk.z();
-					*///?} else {
-					int x = chunk.x;
+					//?} else {
+					/*int x = chunk.x;
 					int z = chunk.z;
-					//?}
+					*///?}
 					if (!chunks.contains(new ChunkPos(x - 1, z))) {
 						guiGraphics.fill(0, 0, 1, 16, color);
 					}
@@ -206,7 +203,7 @@ public class MinimapOverlay implements HudElement {
 				if (landmarkScreenX < width && landmarkScreenY < height && landmarkScreenX > 0 && landmarkScreenY > 0) {
 					if (landmark.contains(LandmarkComponentTypes.STACK) && !landmark.get(LandmarkComponentTypes.STACK).isEmpty()) {
 						ItemStack stack = landmark.get(LandmarkComponentTypes.STACK);
-						guiGraphics.renderFakeItem(stack, -8, -8);
+						guiGraphics.fakeItem(stack, -8, -8);
 					} else {
 						guiGraphics.blit(RenderPipelines.GUI_TEXTURED, Identifier.withDefaultNamespace("textures/map/decorations/white_banner.png"), -4, -8, 0.0F, 0.0F, 8, 8, 8, 8, 8, 8, -16777216 | ColorUtil.tint(landmarkColor, tint));
 					}
@@ -247,7 +244,6 @@ public class MinimapOverlay implements HudElement {
 	public void changeDim(ResourceKey<Level> newDim) {
 		if (dim == newDim) return;
 		this.dim = newDim;
-		this.switchFade = 20.0F;
 	}
 
 	double worldXToRenderX(double worldX) {
@@ -310,8 +306,8 @@ public class MinimapOverlay implements HudElement {
 	}
 
 	//? if <26 {
-	public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+	/*public void render(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
 		extractRenderState(guiGraphics, deltaTracker);
 	}
-	//?}
+	*///?}
 }
