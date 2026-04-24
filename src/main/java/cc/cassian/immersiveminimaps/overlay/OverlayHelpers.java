@@ -161,9 +161,9 @@ public class OverlayHelpers {
 
 	public static int getPlacement(int windowWidth, int fontWidth, boolean leftAlign) {
 		if (leftAlign) {
-			return 10;
+			return 2;
 		} else {
-			return windowWidth-2-fontWidth;
+			return windowWidth-6-fontWidth;
 		}
 	}
 

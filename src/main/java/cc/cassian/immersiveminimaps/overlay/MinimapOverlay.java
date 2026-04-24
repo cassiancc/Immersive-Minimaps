@@ -3,8 +3,6 @@ package cc.cassian.immersiveminimaps.overlay;
 
 import cc.cassian.immersiveminimaps.ModClient;
 import cc.cassian.immersiveminimaps.helpers.ColorUtil;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import folk.sisby.surveyor.PlayerSummary;
 import folk.sisby.surveyor.client.SurveyorClient;
 import folk.sisby.surveyor.landmark.Landmark;
@@ -16,7 +14,7 @@ import java.util.*;
 //? if >1.21.2 {
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.util.ARGB;
+
 import static net.minecraft.util.ARGB.color;
 //?} else {
 /*import static net.minecraft.util.FastColor.ABGR32.color;
@@ -59,7 +57,7 @@ public class MinimapOverlay
 			guiGraphics.blitSprite(
 					//? if >1.21.2
 					RenderPipelines.GUI_TEXTURED,
-					BACKGROUND, 2, 2, width()+5, height()+5);
+					BACKGROUND, OverlayHelpers.getPlacement(mc.getWindow().getGuiScaledWidth(), width(), ModClient.CONFIG.left_align), 2, width()+5, height()+5);
 		}
 		HoofprintMapStorage mapStorage = mapStorage();
 		guiGraphics.pose().pushMatrix();
@@ -295,29 +293,34 @@ public class MinimapOverlay
 	}
 
 	double worldXToRenderX(double worldX) {
-		return (double)this.getWidth() / (double)2.0F + worldX - this.centreX + 8 + getGuiOffset();
-	}
-
-	private double getPadding() {
-		return OverlayHelpers.getPlacement(mc.getWindow().getGuiScaledWidth(), width(), ModClient.CONFIG.left_align);
+		return (double)this.getWidth() / (double)2.0F + worldX - this.centreX + 8 + getGuiOffset(!ModClient.CONFIG.left_align);
 	}
 
 	double worldZToRenderY(double worldZ) {
-		return (double)this.getHeight() / (double)2.0F + worldZ - this.centreZ + 8 + getGuiOffset();
+		return (double)this.getHeight() / (double)2.0F + worldZ - this.centreZ + 8 + getGuiOffset(false);
 	}
 
 	double screenXToWorldX(double screenX) {
 		return screenX / (double)this.getScaleFactor() + this.centreX - (double)this.getWidth() / (double)2.0F;
 	}
 
-	private int getGuiOffset() {
-		return switch (guiScale) {
+	private int getGuiOffset(boolean b) {
+		int i = switch (guiScale) {
 			case 1 -> 8;
 			case 3 -> -2;
 			case 4 -> -3;
 			case 5 -> -4;
 			case null, default -> 0;
 		};
+		if (b) {
+			i += rightAlign();
+		}
+		return i;
+	}
+
+	private int rightAlign() {
+		int windowWidth = mc.getWindow().getWidth();
+		return(int) ((windowWidth -(windowWidth /4.9))/guiScale);
 	}
 
 	double screenYToWorldZ(double screenY) {
