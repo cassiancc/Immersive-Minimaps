@@ -296,7 +296,7 @@ public class MinimapOverlay {
 	}
 
 	double worldZToRenderY(double worldZ) {
-		return (double)this.getHeight() / (double)2.0F + worldZ - this.centreZ + getYOffset(mc.getWindow().getHeight(), mc.getWindow().getGuiScaledHeight());
+		return (double)this.getHeight() / (double)2.0F + worldZ - this.centreZ + getYOffset(mc.getWindow().getHeight());
 	}
 
 	double screenXToWorldX(double screenX) {
@@ -304,32 +304,17 @@ public class MinimapOverlay {
 	}
 
 	private int getXOffset(int window) {
-		int i = (int) switch (guiScale) {
-			case 1 -> window/guiScale/100;
-			case 2 -> window/guiScale/91;
-			case 3 -> window/guiScale/90;
-			case 4 -> window/guiScale/85;
-			case 5 -> window/guiScale/84;
-			case null, default -> 0;
-		};
-		ModClient.LOGGER.info("GUI: %d. Window: %d. Offset: %d".formatted(guiScale, window, i));
+		float guiScale1 = getScaleFactor();
+		int i = (int) (window/ guiScale1 /300);
 		if (!ModClient.CONFIG.left_align) {
 			i += rightAlign(i);
 		}
 		return i;
 	}
 
-	private int getYOffset(int window, int guiScaledHeight) {
-		int i = (int) switch (guiScale) {
-			case 1 -> window/guiScale/53;
-			case 2 -> window/guiScale/53;
-			case 3 -> window/guiScale/53;
-			case 4 -> window/guiScale/53;
-			case 5 -> window/guiScale/52;
-			case null, default -> 0;
-		};
-//		ModClient.LOGGER.info("GUI: %d. Window: %d. Offset: %d".formatted(guiScale, window, i));
-		return i;
+	private int getYOffset(int window) {
+		float guiScale1 = getScaleFactor();
+		return (int) (window/ guiScale1 /200);
 	}
 
 	private int rightAlign(int i) {
