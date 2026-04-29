@@ -2,23 +2,23 @@ package cc.cassian.immersiveminimaps.overlay;
 
 import cc.cassian.immersiveminimaps.ModClient;
 import cc.cassian.immersiveminimaps.helpers.ModLists;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
-import net.minecraft.world.item.component.BundleContents;
-import net.minecraft.world.item.component.ItemContainerContents;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 //? if >1.21.2 {
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.util.ARGB;
 //?}
+//? if >1.21 {
+import net.minecraft.world.item.component.BundleContents;
+import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.core.component.DataComponents;
+//?} else {
+/*import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.CompoundTag;
+*///?}
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
@@ -27,11 +27,11 @@ import java.util.stream.Stream;
 
 import static cc.cassian.immersiveminimaps.ModClient.CONFIG;
 
-public class OverlayHelpers {
+public class MinimapHelpers {
 
 	public static void checkInventoryForOverlays(Minecraft minecraft){
 		if ((CONFIG.minimap_enable)  && minecraft.level != null) {
-			OverlayHelpers.checkInventoryForItems(minecraft.player);
+			MinimapHelpers.checkInventoryForItems(minecraft.player);
 		}
 	}
 
@@ -44,6 +44,7 @@ public class OverlayHelpers {
 		return !player.getActiveEffects().isEmpty();
 	}
 
+	//? if >1.21 {
 	public static int moveBy(Player player) {
 		boolean hasBeneficial =
 				player.getActiveEffects().stream().anyMatch(p -> p.getEffect().value().isBeneficial());
@@ -56,6 +57,7 @@ public class OverlayHelpers {
 		}
 		else return 0;
 	}
+	//?}
 
 	public static boolean shouldCancelRender(Minecraft mc) {
 		if (mc.options.hideGui) return true;
@@ -109,8 +111,10 @@ public class OverlayHelpers {
 		}
 	}
 
+
 	public static Stream<ItemStack> getContainerContents(ItemStack stack) {
 		if (!isContainer(stack)) return Stream.empty();
+		//? if >1.20.5 {
 		var components = stack.getComponents();
 		if (components.has(DataComponents.BUNDLE_CONTENTS)) {
 			BundleContents bundleContents = components.get(DataComponents.BUNDLE_CONTENTS);
@@ -120,20 +124,37 @@ public class OverlayHelpers {
 		else if (components.has(DataComponents.CONTAINER)) {
 			ItemContainerContents containerContents = components.get(DataComponents.CONTAINER);
 			if (containerContents != null) {
-				//? if <26 {
-				/*return containerContents.stream();
-				*///?} else {
+				//? >26 {
 				return containerContents.allItemsCopyStream();
-				//?}
-
+				 //?} else {
+				/*return containerContents.stream();
+				*///?}
 			}
 		}
+		//?} else {
+        /*CompoundTag compoundtag = stack.getTag();
+        if (compoundtag == null) {
+            return Stream.empty();
+        } else {
+            if (compoundtag.contains("Items")) {
+                ListTag listtag = compoundtag.getList("Items", 10);
+                return listtag.stream().map(CompoundTag.class::cast).map(ItemStack::of);
+            }
+            else if (compoundtag.contains("BlockEntityTag")) {
+                var compound = compoundtag.getCompound("BlockEntityTag");
+                ListTag listtag = compound.getList("Items", 10);
+                return listtag.stream().map(CompoundTag.class::cast).map(ItemStack::of);
+            }
+        }
+        *///?}
 		return Stream.empty();
 	}
+
 
 	public static boolean isContainer(ItemStack stack) {
 		if (!CONFIG.requirements.search_containers) return false;
 		if (stack.isEmpty()) return false;
+		//? if >1.20.5 {
 		var components = stack.getComponents();
 		if (components.has(DataComponents.BUNDLE_CONTENTS)) {
 			return true;
@@ -141,6 +162,21 @@ public class OverlayHelpers {
 		else if (components.has(DataComponents.CONTAINER)) {
 			return true;
 		}
+		//?} else {
+        /*CompoundTag compoundtag = stack.getTag();
+        if (compoundtag == null) {
+            return false;
+        } else {
+            if (compoundtag.contains("Items")) {
+                return true;
+            }
+            else if (compoundtag.contains("BlockEntityTag")) {
+                if (compoundtag.getCompound("BlockEntityTag").contains("Items")) {
+                    return true;
+                }
+            }
+        }
+        *///?}
 		return true;
 	}
 
@@ -176,16 +212,18 @@ public class OverlayHelpers {
 		);
 	}
 
-	public static void blitSprite(GuiGraphicsExtractor guiGraphics, String texture, int x, int y) {
-		blitSprite(guiGraphics, ModClient.locate("textures/gui/sprites/%s.png".formatted(texture)), x, y);
-	}
-
-	public static void blitSprite(GuiGraphicsExtractor guiGraphics, Identifier texture, int x, int y) {
-		blitSprite(guiGraphics, texture, x, y, 16);
-	}
-
 	public static void blitSprite(GuiGraphicsExtractor guiGraphics, Identifier texture, int x, int y, int size) {
 		blit(guiGraphics, texture, x, y, 0, 0, size, size, size, size);
+	}
+
+	public static void blitSprite(GuiGraphicsExtractor guiGraphics, Identifier background, int x, int y, int width, int height) {
+		//? if >1.20.2 {
+		guiGraphics.blitSprite(
+				//? if >1.21.2
+				RenderPipelines.GUI_TEXTURED,
+				background, x, y, width, height);
+		//?} else
+		//blitSprite(guiGraphics, ModClient.locate(background.getNamespace(), "textures/gui/sprites/%s.png".formatted(background.getPath())), x, y, width);
 	}
 
 	static boolean hasBeenToggled = false;

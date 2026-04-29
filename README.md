@@ -14,7 +14,7 @@ A minimap overlay displaying the player's surroundings is visible whenever the p
 ## FAQ
 
 - Will this mod be ported to other versions/loaders?
-    - Immersive Minimaps is available for the three most recent versions of Hoofprint - 1.21.1, 1.21.8, and 26.1. Hoofprint is not natively available on NeoForge, but can be used through [Sinytra Connector](https://modrinth.com/mod/sinytra-connector).
+    - Immersive Minimaps is available for all versions that Surveyor 1.0.0 has been released for - 1.20.1, 1.21.1, 1.21.8, and 26.1. Hoofprint is not natively available on NeoForge, but can be used through [Sinytra Connector](https://modrinth.com/mod/sinytra-connector).
 
 ### Troubleshooting / Suggestions
 

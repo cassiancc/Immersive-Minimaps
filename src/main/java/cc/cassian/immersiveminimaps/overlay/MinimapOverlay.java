@@ -10,12 +10,13 @@ import folk.sisby.surveyor.util.RegionPos;
 import garden.hestia.hoofprint.HoofprintMapStorage;
 import java.util.*;
 //? if >1.21.2 {
-import net.minecraft.client.renderer.RenderPipelines;
 import static net.minecraft.util.ARGB.color;
 //?} else {
 /*import static net.minecraft.util.FastColor.ABGR32.color;
 *///?}
+//? if >1.21 {
 import net.minecraft.client.DeltaTracker;
+//?}
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.core.BlockPos;
@@ -47,15 +48,15 @@ public class MinimapOverlay {
 		caveMode = !caveMode;
 	}
 
+	//? if >1.21 {
+	public void extractRenderState(GuiGraphicsExtractor guiGraphics, DeltaTracker delta) {
+		extractRenderState(guiGraphics, delta.getGameTimeDeltaTicks());
+	}
+	//?}
 
-	public void extractRenderState(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {
-		if (OverlayHelpers.shouldCancelRender(mc) || !showMinimap) return;
-		if (ModClient.CONFIG.style.draw_background) {
-			guiGraphics.blitSprite(
-					//? if >1.21.2
-					RenderPipelines.GUI_TEXTURED,
-					BACKGROUND, getPlacement(mc.getWindow().getGuiScaledWidth(), width(), ModClient.CONFIG.left_align)-2, getYOffset()-2, width()+5, height()+5);
-		}
+	public void extractRenderState(GuiGraphicsExtractor guiGraphics, float deltaTracker) {
+		if (MinimapHelpers.shouldCancelRender(mc) || !showMinimap) return;
+		drawBackground(guiGraphics, BACKGROUND);
 		HoofprintMapStorage mapStorage = mapStorage();
 		guiGraphics.pose().pushMatrix();
 		float scaleFactor = this.getScaleFactor();
@@ -86,7 +87,7 @@ public class MinimapOverlay {
 			if (drawHeight > 0 && drawWidth > 0) {
 				guiGraphics.pose().pushMatrix();
 				translate(guiGraphics, (float)this.worldXToRenderX(regionX1 + u), (float)this.worldZToRenderY(regionZ1 + v));
-				OverlayHelpers.blit(
+				MinimapHelpers.blit(
 						guiGraphics,
 						texture, 0, 0, u, v, drawWidth, drawHeight, 512, 512);
 				guiGraphics.pose().popMatrix();
@@ -127,11 +128,14 @@ public class MinimapOverlay {
 		try {
 			mapStorage.landmarks.values().forEach((landmarkx) -> this.renderLandmark(guiGraphics, landmarkx, scaleFactor));
 		} catch (Exception ignored) {} // threw exception on toybox map, unsure how to recreate and low priority
+		drawBackground(guiGraphics, FRAME);
+	}
+
+	private void drawBackground(GuiGraphicsExtractor guiGraphics, Identifier frame) {
 		if (ModClient.CONFIG.style.draw_background) {
-			guiGraphics.blitSprite(
-					//? if >1.21.2
-					RenderPipelines.GUI_TEXTURED,
-					FRAME, getPlacement(mc.getWindow().getGuiScaledWidth(), width(), ModClient.CONFIG.left_align)-2, getYOffset()-2, width()+5, height()+5);
+			MinimapHelpers.blitSprite(
+					guiGraphics,
+					frame, getPlacement(mc.getWindow().getGuiScaledWidth(), width(), ModClient.CONFIG.left_align) - 2, getYOffset() - 2, width() + 5, height() + 5);
 		}
 	}
 
@@ -175,9 +179,9 @@ public class MinimapOverlay {
 			if (!(Math.abs(playerScreenX - playerScreenX) > (double)this.width()) && !(Math.abs(playerScreenY - playerScreenY) > (double)this.height())) {
 				if (clipped) {
 					translate(guiGraphics,-3.0F, -3.0F);
-					OverlayHelpers.blit(
+					MinimapHelpers.blit(
 							guiGraphics,
-							Identifier.withDefaultNamespace("textures/map/decorations/player_off_map.png"), 0, 0, 1.0F, 1.0F, 6, 6, 6, 6, 8, 8, argb);
+							ModClient.withVanillaNamespace("textures/map/decorations/player_off_map.png"), 0, 0, 1.0F, 1.0F, 6, 6, 6, 6, 8, 8, argb);
 				} else {
 					float playerRotation = (float)Math.round(yaw / 360.0F * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360.0F;
 					//? if >1.21.2 {
@@ -186,15 +190,15 @@ public class MinimapOverlay {
 					/*guiGraphics.pose().mulPose(com.mojang.math.Axis.ZP.rotationDegrees(180.0F + playerRotation));
 					*///?}
 					translate(guiGraphics, -2.5F, -3.5F);
-					OverlayHelpers.blit(
+					MinimapHelpers.blit(
 							guiGraphics,
-							Identifier.withDefaultNamespace("textures/map/decorations/player.png"), 0, 0, 2.0F, 0.0F, 5, 7, 5, 7, 8, 8, argb);
+							ModClient.withVanillaNamespace("textures/map/decorations/player.png"), 0, 0, 2.0F, 0.0F, 5, 7, 5, 7, 8, 8, argb);
 				}
 			} else {
 				translate(guiGraphics, -2.0F, -2.0F);
-				OverlayHelpers.blit(
+				MinimapHelpers.blit(
 						guiGraphics,
-						Identifier.withDefaultNamespace("textures/map/decorations/player_off_limits.png"), 0, 0, 2.0F, 2.0F, 4, 4, 4, 4, 8, 8, argb);
+						ModClient.withVanillaNamespace("textures/map/decorations/player_off_limits.png"), 0, 0, 2.0F, 2.0F, 4, 4, 4, 4, 8, 8, argb);
 			}
 
 			guiGraphics.pose().popMatrix();
@@ -269,9 +273,9 @@ public class MinimapOverlay {
 						ItemStack stack = landmark.get(LandmarkComponentTypes.STACK);
 						guiGraphics.fakeItem(stack, -8, -8);
 					} else {
-						OverlayHelpers.blit(
+						MinimapHelpers.blit(
 								guiGraphics,
-								Identifier.withDefaultNamespace("textures/map/decorations/white_banner.png"), -4, -8, 0.0F, 0.0F, 8, 8, 8, 8, 8, 8, -16777216 | ColorUtil.tint(landmarkColor, tint));
+								ModClient.withVanillaNamespace("textures/map/decorations/white_banner.png"), -4, -8, 0.0F, 0.0F, 8, 8, 8, 8, 8, 8, -16777216 | ColorUtil.tint(landmarkColor, tint));
 					}
 				}
 

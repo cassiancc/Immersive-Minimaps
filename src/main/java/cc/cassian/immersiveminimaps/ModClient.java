@@ -3,7 +3,7 @@ package cc.cassian.immersiveminimaps;
 import cc.cassian.immersiveminimaps.config.ModConfig;
 import cc.cassian.immersiveminimaps.helpers.ModLists;
 import cc.cassian.immersiveminimaps.overlay.MinimapOverlay;
-import cc.cassian.immersiveminimaps.overlay.OverlayHelpers;
+import cc.cassian.immersiveminimaps.overlay.MinimapHelpers;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.api.ClientModInitializer;
 
@@ -62,8 +62,24 @@ public class ModClient implements ClientModInitializer {
 			CATEGORY
 	);
 
-	public static Identifier locate(String background) {
-		return Identifier.fromNamespaceAndPath(MOD_ID, background);
+	public static Identifier locate(String namespace, String path) {
+		//? if >1.21 {
+		return Identifier.fromNamespaceAndPath(namespace, path);
+		//?} else {
+		/*return new Identifier(namespace, path);
+		 *///?}
+	}
+
+	public static Identifier locate(String path) {
+		return locate(MOD_ID, path);
+	}
+
+	public static Identifier withVanillaNamespace(String s) {
+		//? if >1.21 {
+		return Identifier.withDefaultNamespace(s);
+		 //?} else {
+		/*return new Identifier(s);
+		*///?}
 	}
 
 	@Override
@@ -90,11 +106,11 @@ public class ModClient implements ClientModInitializer {
 	}
 
 	private static void tick(Minecraft minecraft) {
-		OverlayHelpers.checkKeybind();
+		MinimapHelpers.checkKeybind();
 		if (minecraft.level != null && minecraft.player != null) {
 			MinimapOverlay.INSTANCE.init();
 			MinimapOverlay.INSTANCE.changeDim(minecraft.level.dimension());
-			OverlayHelpers.checkInventoryForOverlays(minecraft);
+			MinimapHelpers.checkInventoryForOverlays(minecraft);
 			MinimapOverlay.INSTANCE.tick();
 		}
 	}
