@@ -214,9 +214,13 @@ publishMods {
         minecraftVersions.add(stonecutter.current.version)
         minecraftVersions.addAll(additionalVersions)
         requires("fabric-api")
+        requires("hoofprint")
+        requires("surveyor")
         optional("cloth-config")
+
     }
 
+    /*
     curseforge {
         projectId = property("publish.curseforge") as String
         accessToken = env.CURSEFORGE_API_KEY.orNull()
@@ -224,6 +228,8 @@ publishMods {
         minecraftVersions.addAll(additionalVersions)
         requires("fabric-api")
     }
+
+     */
 }
 
 publishing {

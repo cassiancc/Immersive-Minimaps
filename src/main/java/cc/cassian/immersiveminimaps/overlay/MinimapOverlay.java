@@ -162,7 +162,7 @@ public class MinimapOverlay {
 					//? if >1.21.2 {
 					guiGraphics.pose().rotate((float)Math.toRadians(180.0F + playerRotation));
 					//?} else {
-					/*guiGraphics.pose().mulPose(Axis.ZP.rotationDegrees(180.0F + playerRotation));
+					/*guiGraphics.pose().mulPose(com.mojang.math.Axis.ZP.rotationDegrees(180.0F + playerRotation));
 					*///?}
 					translate(guiGraphics, -2.5F, -3.5F);
 					OverlayHelpers.blit(

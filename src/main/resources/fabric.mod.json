@@ -3,12 +3,12 @@
 	"id": "immersiveminimaps",
 	"version": "${version}",
 	"name": "Immersive Minimaps",
-	"description": "A Surveyor-powered clientside minimap overlayed on your HUD - as long as you have the right item in your inventory (or bundle!)",
+	"description": "A minimalist, client-side minimap that integrates Hoofprint into the player's UI, allowing it to only be visible as long as the player has a map.",
 	"authors": [
 		"cassiancc"
 	],
 	"contact": {
-		"homepage": "https://github.com/cassiancc/Immersive-Minimaps",
+		"homepage": "https://modrinth.com/project/immersive-minimaps",
 		"sources": "https://github.com/cassiancc/Immersive-Minimaps",
 		"issues": "https://github.com/cassiancc/Immersive-Minimaps/issues"
 	},
@@ -27,6 +27,7 @@
 		"fabricloader": "*",
 		"minecraft": "${minecraft}",
 		"fabric-api": "*",
-		"surveyor": "*"
+		"surveyor": "*",
+		"hoofprint": "*"
 	}
 }

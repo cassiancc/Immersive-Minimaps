@@ -1,19 +1,27 @@
 # Immersive Minimaps
 
 <a href='https://modrinth.com/mod/immersive-overlays/versions?l=fabric'><img alt="fabric" height="56" src="https://raw.githubusercontent.com/intergrav/devins-badges/refs/heads/v3/assets/cozy/supported/fabric_vector.svg"></a>
+<a href='https://modrinth.com/mod/sinytra-connector'><img alt="Compatible with Sinytra Connector" height="56" src="https://raw.githubusercontent.com/Sinytra/.github/refs/heads/main/badges/connector/cozy.svg"></a>
 
-A minimalist, client-side minimap. An addon for Hoofprint that integrates it into the player's UI in the style of Immersive Overlays, allowing it to only be visible as long as the player has a map.
+A minimalist, client-side minimap that integrates Hoofprint into the player's UI, allowing it to only be visible as long as the player has a map.
 
-## Minimap Overlay
+This mod pairs well with my [Immersive Overlays](https://modrinth.com/project/immersive-overlays) mod to display more information in the HUD.
+
+## Features
 
 A minimap overlay displaying the player's surroundings is visible whenever the player has a map in their inventory, including in a bundle.
 
-## Troubleshooting / Suggestions
+## FAQ
 
-Hoofprint is a **clientside map frontend** for [Surveyor Map Framework](https://modrinth.com/mod/surveyor)<br/>
-It renders Surveyor save data in a vanilla-enhanced style, and allows editing surveyor waypoints<br/>
-Issues and suggestions regarding the minimap are [Immersive Minimaps Issues](https://github.com/cassiancc/immersive-minimaps/issues)<br/>
-Issues and suggestions regarding map sharing, explored map area, and automatic markers are [Surveyor Issues](https://github.com/sisby-folk/surveyor)
+- Will this mod be ported to other versions/loaders?
+    - Immersive Minimaps is available for the three most recent versions of Hoofprint - 1.21.1, 1.21.8, and 26.1. Hoofprint is not natively available on NeoForge, but can be used through [Sinytra Connector](https://modrinth.com/mod/sinytra-connector).
+
+### Troubleshooting / Suggestions
+
+Immersive Minimaps is an addon for Hoofprint, which makes use of the for [Surveyor Map Framework](https://modrinth.com/mod/surveyor). Immersive Minimaps renders data collected by Surveyor and Hoofrpint.
+
+- Issues and suggestions regarding the minimap are [Immersive Minimaps Issues](https://github.com/cassiancc/immersive-minimaps/issues)<br/>
+- Issues and suggestions regarding map sharing, explored map area, and automatic markers are [Surveyor Issues](https://github.com/sisby-folk/surveyor)
 
 ## Credits
 
