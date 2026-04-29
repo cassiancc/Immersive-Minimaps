@@ -55,6 +55,12 @@ public class ModClient implements ClientModInitializer {
 			GLFW.GLFW_KEY_MINUS, // The default keycode
 			CATEGORY
 	);
+	public static final KeyMapping caveMode = new KeyMapping(
+			"key.immersiveminimaps.cave_mode", // The translation key of the name shown in the Controls screen
+			InputConstants.Type.KEYSYM, // This key mapping is for Keyboards by default
+			GLFW.GLFW_KEY_BACKSPACE, // The default keycode
+			CATEGORY
+	);
 
 	public static Identifier locate(String background) {
 		return Identifier.fromNamespaceAndPath(MOD_ID, background);
@@ -70,13 +76,17 @@ public class ModClient implements ClientModInitializer {
 		//?} else {
 		/*HudRenderCallback.EVENT.register(MinimapOverlay.INSTANCE::extractRenderState);
 		*///?}
+        registerKeyMapping(ModClient.zoomIn);
+        registerKeyMapping(ModClient.zoomOut);
+		registerKeyMapping(ModClient.caveMode);
+	}
+
+	private static void registerKeyMapping(KeyMapping keyMapping) {
 		//? if <26 {
-		/*KeyBindingHelper.registerKeyBinding(ModClient.zoomIn);
-		KeyBindingHelper.registerKeyBinding(ModClient.zoomOut);
+		/*KeyBindingHelper.registerKeyBinding(keyMapping);
 		*///?} else {
-        KeyMappingHelper.registerKeyMapping(ModClient.zoomIn);
-        KeyMappingHelper.registerKeyMapping(ModClient.zoomOut);
-        //?}
+		KeyMappingHelper.registerKeyMapping(keyMapping);
+		//?}
 	}
 
 	private static void tick(Minecraft minecraft) {

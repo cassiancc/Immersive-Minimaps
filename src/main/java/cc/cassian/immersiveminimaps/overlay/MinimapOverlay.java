@@ -37,11 +37,15 @@ public class MinimapOverlay {
 	private double centreX = 0.0F;
 	private double centreZ = 0.0F;
 	private @Nullable Integer guiScale = null;
-	private final boolean caveMode = false;
+	private boolean caveMode = false;
 	private final boolean hideDecorations = false;
 	private @Nullable ResourceKey<Level> dim;
 	private final Minecraft mc = Minecraft.getInstance();
 	public static MinimapOverlay INSTANCE = new MinimapOverlay();
+
+	void caveMode() {
+		caveMode = !caveMode;
+	}
 
 
 	public void extractRenderState(GuiGraphicsExtractor guiGraphics, DeltaTracker deltaTracker) {

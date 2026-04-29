@@ -197,7 +197,10 @@ public class OverlayHelpers {
 		} else if (ModClient.zoomOut.isDown() && !hasBeenToggled) {
 			MinimapOverlay.INSTANCE.zoomOut();
 			hasBeenToggled = true;
-		} else {
+		} else if (ModClient.caveMode.isDown() && !hasBeenToggled) {
+			MinimapOverlay.INSTANCE.caveMode();
+			hasBeenToggled = true;
+		} else if (!ModClient.zoomIn.isDown() && !ModClient.zoomOut.isDown() && !ModClient.caveMode.isDown()) {
 			hasBeenToggled = false;
 		}
 	}
