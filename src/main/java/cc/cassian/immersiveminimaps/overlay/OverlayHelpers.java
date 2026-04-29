@@ -159,14 +159,6 @@ public class OverlayHelpers {
 		}
 	}
 
-	public static int getPlacement(int windowWidth, int fontWidth, boolean leftAlign) {
-		if (leftAlign) {
-			return 2;
-		} else {
-			return windowWidth-6-fontWidth;
-		}
-	}
-
 	public static void blit(GuiGraphicsExtractor guiGraphics, Identifier texture, int x, int y, int uOffset, int vOffset, int uWidth, int vHeight, int textureWidth, int textureHeight) {
 		guiGraphics.blit(
 				//? if >1.21.2

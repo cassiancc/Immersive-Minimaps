@@ -39,7 +39,6 @@ public class MinimapOverlay {
 	private @Nullable Integer guiScale = null;
 	private final boolean caveMode = false;
 	private final boolean hideDecorations = false;
-	private int cursorFrame = 0;
 	private @Nullable ResourceKey<Level> dim;
 	private final Minecraft mc = Minecraft.getInstance();
 	public static MinimapOverlay INSTANCE = new MinimapOverlay();
@@ -51,7 +50,7 @@ public class MinimapOverlay {
 			guiGraphics.blitSprite(
 					//? if >1.21.2
 					RenderPipelines.GUI_TEXTURED,
-					BACKGROUND, OverlayHelpers.getPlacement(mc.getWindow().getGuiScaledWidth(), width(), ModClient.CONFIG.left_align), 2, width()+5, height()+5);
+					BACKGROUND, getPlacement(mc.getWindow().getGuiScaledWidth(), width(), ModClient.CONFIG.left_align)-2, getYOffset()-2, width()+5, height()+5);
 		}
 		HoofprintMapStorage mapStorage = mapStorage();
 		guiGraphics.pose().pushMatrix();
@@ -64,10 +63,12 @@ public class MinimapOverlay {
 		int borderZ1 = Math.max((int)Math.floor(worldBorder.getCenterZ() - size / (double)2.0F), mapStorage.minBlockZ);
 		int borderZ2 = Math.min((int)Math.ceil(worldBorder.getCenterZ() + size / (double)2.0F), mapStorage.maxBlockZ);
 
-		int renderX1 = Math.max((int)Math.floor(this.screenXToWorldX(0.0F)), borderX1);
-		int renderX2 = Math.min((int)Math.ceil(this.screenXToWorldX(this.width())), borderX2);
-		int renderZ1 = Math.max((int)Math.floor(this.screenYToWorldZ(0.0F)), borderZ1);
-		int renderZ2 = Math.min((int)Math.ceil(this.screenYToWorldZ(this.height())), borderZ2);
+		int x = getXOffset();
+		int y = getYOffset();
+		int renderX1 = Math.max((int)Math.floor(this.screenXToWorldX(x)), borderX1);
+		int renderX2 = Math.min((int)Math.ceil(this.screenXToWorldX(x+this.width())), borderX2);
+		int renderZ1 = Math.max((int)Math.floor(this.screenYToWorldZ(y)), borderZ1);
+		int renderZ2 = Math.min((int)Math.ceil(this.screenYToWorldZ(y+this.height())), borderZ2);
 
 		for(Map.Entry<RegionPos, Identifier> entry : (this.caveMode ? mapStorage.caveRegionTextures : mapStorage.regionTextures).entrySet()) {
 			RegionPos regionPos = entry.getKey();
@@ -126,8 +127,24 @@ public class MinimapOverlay {
 			guiGraphics.blitSprite(
 					//? if >1.21.2
 					RenderPipelines.GUI_TEXTURED,
-					FRAME, OverlayHelpers.getPlacement(mc.getWindow().getGuiScaledWidth(), width(), ModClient.CONFIG.left_align), 2, width()+5, height()+5);
+					FRAME, getPlacement(mc.getWindow().getGuiScaledWidth(), width(), ModClient.CONFIG.left_align)-2, getYOffset()-2, width()+5, height()+5);
 		}
+	}
+
+	public static int getPlacement(int windowWidth, int fontWidth, boolean leftAlign) {
+		if (leftAlign) {
+			return getXOffset();
+		} else {
+			return windowWidth-6-fontWidth;
+		}
+	}
+
+	private static int getXOffset() {
+		return ModClient.CONFIG.xOffset;
+	}
+
+	private static int getYOffset() {
+		return ModClient.CONFIG.yOffset;
 	}
 
 	private int width() {
@@ -281,7 +298,6 @@ public class MinimapOverlay {
 	}
 
 	public void tick() {
-		this.cursorFrame = (this.cursorFrame + 1) % 40;
 		this.centreX = this.mc.player.getBlockX();
 		this.centreZ = this.mc.player.getBlockZ();
 	}
@@ -292,29 +308,15 @@ public class MinimapOverlay {
 	}
 
 	double worldXToRenderX(double worldX) {
-		return (double)this.getWidth() / (double)2.0F + worldX - this.centreX + getXOffset(mc.getWindow().getWidth());
+		return (double)this.getWidth() / (double)2.0F + worldX - this.centreX;
 	}
 
 	double worldZToRenderY(double worldZ) {
-		return (double)this.getHeight() / (double)2.0F + worldZ - this.centreZ + getYOffset(mc.getWindow().getHeight());
+		return (double)this.getHeight() / (double)2.0F + worldZ - this.centreZ;
 	}
 
 	double screenXToWorldX(double screenX) {
 		return screenX / (double)this.getScaleFactor() + this.centreX - (double)this.getWidth() / (double)2.0F;
-	}
-
-	private int getXOffset(int window) {
-		float guiScale1 = getScaleFactor();
-		int i = (int) (window/ guiScale1 /300);
-		if (!ModClient.CONFIG.left_align) {
-			i += rightAlign(i);
-		}
-		return i;
-	}
-
-	private int getYOffset(int window) {
-		float guiScale1 = getScaleFactor();
-		return (int) (window/ guiScale1 /200);
 	}
 
 	private int rightAlign(int i) {

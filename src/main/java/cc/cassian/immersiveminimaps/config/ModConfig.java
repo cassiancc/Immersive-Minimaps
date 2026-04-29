@@ -33,6 +33,8 @@ public class ModConfig extends WrappedConfig {
 	public int size = 80;
 	@Comment("NOT YET IMPLEMENTED")
 	public boolean left_align = true;
+	public int xOffset = 5;
+	public int yOffset = 5;
 
 	@Comment({"Options to change the visuals of the map to be more or less vanilla-style."})
 	public Requirements requirements = new Requirements();
