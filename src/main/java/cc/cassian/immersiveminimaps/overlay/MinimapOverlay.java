@@ -135,7 +135,7 @@ public class MinimapOverlay {
 		if (ModClient.CONFIG.style.draw_background) {
 			MinimapHelpers.blitSprite(
 					guiGraphics,
-					frame, getPlacement(mc.getWindow().getGuiScaledWidth(), width(), ModClient.CONFIG.left_align) - 2, getYOffset() - 2, width() + 5, height() + 5);
+					frame, getPlacement(mc.getWindow().getGuiScaledWidth(), width(), true) - 2, getYOffset() - 2, width() + 5, height() + 5);
 		}
 	}
 
@@ -148,11 +148,11 @@ public class MinimapOverlay {
 	}
 
 	private static int getXOffset() {
-		return ModClient.CONFIG.xOffset;
+		return ModClient.CONFIG.offset;
 	}
 
 	private static int getYOffset() {
-		return ModClient.CONFIG.yOffset;
+		return ModClient.CONFIG.offset;
 	}
 
 	private int width() {
@@ -169,8 +169,8 @@ public class MinimapOverlay {
 		if ((!friend || inDim) && (online || ModClient.CONFIG.style.offlinePlayers) && !this.hideDecorations) {
 			double dimX = pos.x();
 			double dimZ = pos.z();
-			double playerScreenX = this.renderToScreen(this.worldXToRenderX(dimX));
-			double playerScreenY = this.renderToScreen(this.worldZToRenderY(dimZ));
+			double playerScreenX = this.renderToScreen(this.worldXToRenderX(dimX+getXOffset()));
+			double playerScreenY = this.renderToScreen(this.worldZToRenderY(dimZ+getYOffset()));
 			guiGraphics.pose().pushMatrix();
 			boolean clipped = playerScreenX != playerScreenX || playerScreenY != playerScreenY;
 			translate(guiGraphics, (float)playerScreenX, (float)playerScreenY);
