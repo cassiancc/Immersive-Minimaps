@@ -183,13 +183,6 @@ stonecutter {
     }
 }
 
-fabricApi {
-    configureDataGeneration() {
-        outputDirectory = file("$rootDir/src/main/generated")
-        client = true
-    }
-}
-
 tasks {
     processResources {
         exclude("**/neoforge.mods.toml", "**/mods.toml")
@@ -205,13 +198,7 @@ tasks {
 
 java {
     withSourcesJar()
-    val javaCompat = if (stonecutter.eval(stonecutter.current.version, ">26")) {
-        JavaVersion.VERSION_25
-    } else if (stonecutter.eval(stonecutter.current.version, ">=1.21")) {
-        JavaVersion.VERSION_21
-    } else {
-        JavaVersion.VERSION_17
-    }
+    val javaCompat = JavaVersion.VERSION_25
     sourceCompatibility = javaCompat
     targetCompatibility = javaCompat
 }
@@ -225,15 +212,14 @@ val additionalVersions: List<String> = additionalVersionsStr
 
 publishMods {
     file = tasks.jar.map { it.archiveFile.get() }
-//    additionalFiles.from(tasks.sourcesJar.map { it.archiveFile.get() })
+    additionalFiles.from(tasks.named<org.gradle.jvm.tasks.Jar>("sourcesJar").map { it.archiveFile.get() })
 
     // one of BETA, ALPHA, STABLE
     type = STABLE
-    displayName = "${property("mod.name")} ${property("mod.version")} for ${stonecutter.current.version} Fabric"
+    displayName = "${property("mod.name")} ${property("mod.version")} for ${stonecutter.current.version}"
     version = "${property("mod.version")}+${property("deps.minecraft")}-fabric"
     changelog = provider { rootProject.file("CHANGELOG-LATEST.md").readText() }
     modLoaders.add("fabric")
-    modLoaders.add("neoforge")
 
     modrinth {
         projectId = property("publish.modrinth") as String
@@ -259,16 +245,4 @@ publishMods {
     }
 
      */
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = "cc.cassian.immersiveoverlays"
-            artifactId = "immersiveoverlays-fabric"
-            version = "${property("mod.version")}+${property("deps.minecraft")}"
-
-            from(components["java"])
-        }
-    }
 }

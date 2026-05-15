@@ -229,17 +229,7 @@ stonecutter {
     }
 }
 
-fabricApi {
-    configureDataGeneration() {
-        outputDirectory = file("$rootDir/src/main/generated")
-        client = true
-    }
-}
-
 tasks {
-    processResources {
-        exclude("**/neoforge.mods.toml", "**/mods.toml")
-    }
 
     register<Copy>("buildAndCollect") {
         group = "build"
@@ -273,11 +263,15 @@ publishMods {
 
     // one of BETA, ALPHA, STABLE
     type = STABLE
-    displayName = "${property("mod.name")} ${property("mod.version")} for ${stonecutter.current.version} Fabric"
+    displayName = "${property("mod.name")} ${property("mod.version")} for ${stonecutter.current.version}"
     version = "${property("mod.version")}+${property("deps.minecraft")}-fabric"
     changelog = provider { rootProject.file("CHANGELOG-LATEST.md").readText() }
     modLoaders.add("fabric")
-    modLoaders.add("neoforge")
+    if (stonecutter.eval(mcVersion, ">1.21")) {
+        modLoaders.add("neoforge")
+    } else {
+        modLoaders.add("forge")
+    }
 
     modrinth {
         projectId = property("publish.modrinth") as String
@@ -302,16 +296,4 @@ publishMods {
     }
 
      */
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = "cc.cassian.immersiveoverlays"
-            artifactId = "immersiveoverlays-fabric"
-            version = "${property("mod.version")}+${property("deps.minecraft")}"
-
-            from(components["java"])
-        }
-    }
 }

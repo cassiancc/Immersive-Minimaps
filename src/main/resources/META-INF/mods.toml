@@ -1,0 +1,40 @@
+modLoader = "javafml"
+loaderVersion = "[43,)"
+license = "LGPL-3.0-or-later"
+
+[[mods]]
+modId = "immersiveminimaps"
+version = "${version}"
+displayName = "${mod_name}"
+authors = "cassiancc"
+description = '''
+${mod_description}
+'''
+logoFile = "icon.png"
+issueTrackerURL = "https://github.com/cassiancc/Immersive-Minimaps/issues"
+displayURL="https://modrinth.com/mod/immersive-minimaps"
+modURL="https://modrinth.com/mod/immersive-minimaps"
+
+[[dependencies.immersiveminimaps]]
+modId = "forge"
+mandatory = true
+versionRange = "[43,50)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.immersiveminimaps]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20,1.20.2)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.immersiveminimaps]]
+modId="connector"
+mandatory=true
+versionRange="*"
+ordering="NONE"
+side="BOTH"
+
+[properties]
+"connector:placeholder"=true
