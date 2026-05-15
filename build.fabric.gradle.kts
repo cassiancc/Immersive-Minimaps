@@ -267,11 +267,10 @@ publishMods {
     version = "${property("mod.version")}+${property("deps.minecraft")}-fabric"
     changelog = provider { rootProject.file("CHANGELOG-LATEST.md").readText() }
     modLoaders.add("fabric")
-    if (stonecutter.eval(mcVersion, ">1.21")) {
+    if (stonecutter.eval(mcVersion, "=1.21.1"))
         modLoaders.add("neoforge")
-    } else {
+    if (stonecutter.eval(mcVersion, "=1.20.1"))
         modLoaders.add("forge")
-    }
 
     modrinth {
         projectId = property("publish.modrinth") as String
@@ -279,7 +278,8 @@ publishMods {
         minecraftVersions.add(stonecutter.current.version)
         minecraftVersions.addAll(additionalVersions)
         requires("fabric-api")
-        requires("connector")
+        if (stonecutter.eval(mcVersion, "=1.21.1") || stonecutter.eval(mcVersion, "=1.20.1"))
+            requires("connector")
         requires("hoofprint")
         requires("surveyor")
         optional("mcqoy")

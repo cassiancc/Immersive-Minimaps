@@ -100,7 +100,7 @@ public class MinimapOverlay {
 		for(@Nullable Landmark landmark : mapStorage.landmarks.values()) {
 			if (landmark != null) {
 				BlockPos pos = landmark.get(LandmarkComponentTypes.POS);
-				if (!ModClient.CONFIG.style.draw_landmarks) {
+				if (ModClient.CONFIG.style.draw_landmarks) {
 					if (pos == null) {
 						for(ChunkPos chunk : RegionPos.regionsToChunks(landmark.getOrDefault(LandmarkComponentTypes.CHUNKS, new HashMap<>()))) {
 							double screenX = this.renderToScreen(this.worldXToRenderX(chunk.getMinBlockX()));
@@ -221,7 +221,7 @@ public class MinimapOverlay {
 
 	private void renderLandmark(GuiGraphicsExtractor guiGraphics, Landmark landmark, float scaleFactor) {
 		BlockPos pos = landmark.get(LandmarkComponentTypes.POS);
-		if (!ModClient.CONFIG.style.draw_landmarks) {
+		if (ModClient.CONFIG.style.draw_landmarks) {
 			if (pos == null) {
 				Set<ChunkPos> chunks = RegionPos.regionsToChunks(landmark.getOrDefault(LandmarkComponentTypes.CHUNKS, new HashMap<>()));
 				guiGraphics.pose().pushMatrix();
