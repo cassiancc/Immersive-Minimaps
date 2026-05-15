@@ -59,6 +59,7 @@ public class MinimapOverlay {
 		drawBackground(guiGraphics, BACKGROUND);
 		HoofprintMapStorage mapStorage = mapStorage();
 		guiGraphics.pose().pushMatrix();
+		guiGraphics.pose().translate(getXOffset(), getYOffset());
 		float scaleFactor = this.getScaleFactor();
 		scale(guiGraphics, scaleFactor, scaleFactor);
 		WorldBorder worldBorder = this.mc.level.getWorldBorder();
@@ -68,8 +69,8 @@ public class MinimapOverlay {
 		int borderZ1 = Math.max((int)Math.floor(worldBorder.getCenterZ() - size / (double)2.0F), mapStorage.minBlockZ);
 		int borderZ2 = Math.min((int)Math.ceil(worldBorder.getCenterZ() + size / (double)2.0F), mapStorage.maxBlockZ);
 
-		int x = getXOffset();
-		int y = getYOffset();
+		int x = 0;
+		int y = 0;
 		int renderX1 = Math.max((int)Math.floor(this.screenXToWorldX(x)), borderX1);
 		int renderX2 = Math.min((int)Math.ceil(this.screenXToWorldX(x+this.width())), borderX2);
 		int renderZ1 = Math.max((int)Math.floor(this.screenYToWorldZ(y)), borderZ1);
@@ -148,11 +149,11 @@ public class MinimapOverlay {
 	}
 
 	private static int getXOffset() {
-		return ModClient.CONFIG.offset;
+		return ModClient.CONFIG.xOffset;
 	}
 
 	private static int getYOffset() {
-		return ModClient.CONFIG.offset;
+		return ModClient.CONFIG.yOffset;
 	}
 
 	private int width() {
@@ -166,12 +167,13 @@ public class MinimapOverlay {
 	private void renderPlayer(GuiGraphicsExtractor guiGraphics, boolean online, float yaw, Vec3 pos, ResourceKey<Level> dimension, UUID uuid) {
 		boolean friend = !SurveyorClient.getClientUuid().equals(uuid);
 		boolean inDim = dimension.equals(this.dim);
-		if ((!friend || inDim) && (online || ModClient.CONFIG.style.offlinePlayers) && !this.hideDecorations) {
+		if ((!friend || inDim) && (online) && !this.hideDecorations) {
 			double dimX = pos.x();
 			double dimZ = pos.z();
-			double playerScreenX = this.renderToScreen(this.worldXToRenderX(dimX+getXOffset()));
-			double playerScreenY = this.renderToScreen(this.worldZToRenderY(dimZ+getYOffset()));
+			double playerScreenX = this.renderToScreen(this.worldXToRenderX(dimX));
+			double playerScreenY = this.renderToScreen(this.worldZToRenderY(dimZ));
 			guiGraphics.pose().pushMatrix();
+			guiGraphics.pose().translate(getXOffset(), getYOffset());
 			boolean clipped = playerScreenX != playerScreenX || playerScreenY != playerScreenY;
 			translate(guiGraphics, (float)playerScreenX, (float)playerScreenY);
 			int tint = !online ? 77 : (255);
@@ -266,6 +268,7 @@ public class MinimapOverlay {
 				int landmarkColor = landmark.getOrDefault(LandmarkComponentTypes.COLOR, 16777215);
 				int tint = 16777215;
 				guiGraphics.pose().pushMatrix();
+				translate(guiGraphics, getXOffset(), getYOffset());
 				translate(guiGraphics, (float)landmarkScreenX, (float)landmarkScreenY);
 
 				if (landmarkScreenX < width() && landmarkScreenY < height() && landmarkScreenX > 0 && landmarkScreenY > 0) {
