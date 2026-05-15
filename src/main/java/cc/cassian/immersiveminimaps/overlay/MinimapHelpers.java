@@ -1,6 +1,8 @@
 package cc.cassian.immersiveminimaps.overlay;
 
 import cc.cassian.immersiveminimaps.ModClient;
+import cc.cassian.immersiveminimaps.compat.ModCompat;
+import cc.cassian.immersiveminimaps.compat.TrinketsCompat;
 import cc.cassian.immersiveminimaps.helpers.ModLists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -81,7 +83,7 @@ public class MinimapHelpers {
 		}
 	}
 
-	private static void isImportantItem(ItemStack itemStack) {
+	public static void isImportantItem(ItemStack itemStack) {
 		if (itemStack.isEmpty())
 			return;
 		var item = itemStack.getItem();
@@ -90,15 +92,27 @@ public class MinimapHelpers {
 	}
 
 	public static void checkInventoryForItems(@Nullable Player player) {
+		if (ModCompat.IMMERSIVE_OVERLAYS && CONFIG.requirements.immersive_overlays_bridge) return;
 		if (CONFIG.requirements.require_item) {
 			MinimapOverlay.showMinimap = false;
 			if (player == null)
 				return;
 			isImportantItemOrContainer(player.getOffhandItem());
-			for (EquipmentSlot value : EquipmentSlot.values()) {
-				isImportantItemOrContainer(player.getItemBySlot(value));
+			if (CONFIG.requirements.require_item_in_hand) {
+				isImportantItemOrContainer(player.getMainHandItem());
+			} else {
+				for (EquipmentSlot value : EquipmentSlot.values()) {
+					isImportantItemOrContainer(player.getItemBySlot(value));
+				}
+				checkInventoryForStack(player.getInventory());
+				//? if <26 {
+				/*if (ModCompat.TRINKETS)
+					TrinketsCompat.checkForImportantAccessories(player);
+				*///?} else {
+                if (ModCompat.TRINKETS_UPDATED)
+                    TrinketsCompat.checkForImportantAccessories(player);
+                //?}
 			}
-			checkInventoryForStack(player.getInventory());
 		} else {
 			MinimapOverlay.showMinimap = true;
 		}

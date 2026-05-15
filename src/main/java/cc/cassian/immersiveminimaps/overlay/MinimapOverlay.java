@@ -59,7 +59,7 @@ public class MinimapOverlay {
 		drawBackground(guiGraphics, BACKGROUND);
 		HoofprintMapStorage mapStorage = mapStorage();
 		guiGraphics.pose().pushMatrix();
-		guiGraphics.pose().translate(getXOffset(), getYOffset());
+		translate(guiGraphics, getXOffset(), getYOffset());
 		float scaleFactor = this.getScaleFactor();
 		scale(guiGraphics, scaleFactor, scaleFactor);
 		WorldBorder worldBorder = this.mc.level.getWorldBorder();
@@ -136,23 +136,19 @@ public class MinimapOverlay {
 		if (ModClient.CONFIG.style.draw_background) {
 			MinimapHelpers.blitSprite(
 					guiGraphics,
-					frame, getPlacement(mc.getWindow().getGuiScaledWidth(), width(), true) - 2, getYOffset() - 2, width() + 5, height() + 5);
+					frame, getXOffset() - 2, getYOffset() - 2, width() + 5, height() + 5);
 		}
 	}
 
-	public static int getPlacement(int windowWidth, int fontWidth, boolean leftAlign) {
-		if (leftAlign) {
-			return getXOffset();
+	private int getXOffset() {
+		if (ModClient.CONFIG.left_align) {
+			return ModClient.CONFIG.xOffset;
 		} else {
-			return windowWidth-6-fontWidth;
+			return mc.getWindow().getGuiScaledWidth()-6-width();
 		}
 	}
 
-	private static int getXOffset() {
-		return ModClient.CONFIG.xOffset;
-	}
-
-	private static int getYOffset() {
+	private int getYOffset() {
 		return ModClient.CONFIG.yOffset;
 	}
 
@@ -173,7 +169,7 @@ public class MinimapOverlay {
 			double playerScreenX = this.renderToScreen(this.worldXToRenderX(dimX));
 			double playerScreenY = this.renderToScreen(this.worldZToRenderY(dimZ));
 			guiGraphics.pose().pushMatrix();
-			guiGraphics.pose().translate(getXOffset(), getYOffset());
+			translate(guiGraphics, getXOffset(), getYOffset());
 			boolean clipped = playerScreenX != playerScreenX || playerScreenY != playerScreenY;
 			translate(guiGraphics, (float)playerScreenX, (float)playerScreenY);
 			int tint = !online ? 77 : (255);
@@ -293,7 +289,7 @@ public class MinimapOverlay {
 
 	public void init() {
 		if (guiScale == null)
-			this.guiScale = ModClient.CONFIG.defaultScale < 1 ? (int)Math.ceil((double)this.mc.getWindow().getGuiScale() / (ModClient.CONFIG.defaultScale == -1 ? (double)2.0F : (double)1.0F)) : ModClient.CONFIG.defaultScale;
+			this.guiScale = ModClient.CONFIG.default_scale < 1 ? (int)Math.ceil((double)this.mc.getWindow().getGuiScale() / (ModClient.CONFIG.default_scale == -1 ? (double)2.0F : (double)1.0F)) : ModClient.CONFIG.default_scale;
 	}
 
 	public void zoomOut() {

@@ -120,6 +120,14 @@ repositories {
             }
         }
     }
+    maven {
+        name = "Nucleoid Maven (Trinkets)"
+        url = uri("https://maven.nucleoid.xyz")
+        content {
+            includeGroupAndSubgroups("eu.pb4")
+            includeGroupAndSubgroups("xyz.nucleoid")
+        }
+    }
     mavenCentral()
 }
 
@@ -135,9 +143,12 @@ dependencies {
     implementation("maven.modrinth:hoofprint:${property("deps.hoofprint")}")
     implementation("folk.sisby:kaleido-config:${property("deps.kaleido")}")
     include("folk.sisby:kaleido-config:${property("deps.kaleido")}")
+    // Trinkets
+    implementation("eu.pb4:trinkets:${property("deps.trinkets")}")
     // McQoy
     implementation("dev.isxander:yet-another-config-lib:${property("deps.yacl")}")
     implementation("maven.modrinth:mcqoy:${property("deps.mcqoy")}")
+    implementation("maven.modrinth:immersive-overlays:${property("deps.immersive_overlays")}")
 
 }
 

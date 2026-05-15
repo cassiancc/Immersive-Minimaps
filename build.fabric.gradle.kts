@@ -57,6 +57,13 @@ repositories {
         }
     }
     maven {
+        name = "Wisp Forest Maven"
+        url = uri("https://maven.wispforest.io/releases/")
+        content {
+            includeGroupAndSubgroups("io.wispforest")
+        }
+    }
+    maven {
         name = "Modrinth"
         url = uri("https://api.modrinth.com/maven")
         content {
@@ -85,6 +92,48 @@ repositories {
             includeGroupAndSubgroups("org.quiltmc.parsers")
         }
     }
+    maven {
+        name = "Fuzs Mod Resources"
+        url = uri("https://raw.githubusercontent.com/Fuzss/modresources/main/maven/")
+        content {
+            includeGroupAndSubgroups("fuzs")
+        }
+    }
+    maven {
+        name = "FzzyMaven"
+        url = uri("https://maven.fzzyhmstrs.me/")
+        content {
+            includeGroup("me.fzzyhmstrs")
+        }
+    }
+    maven {
+        name = "Cardinal Components"
+        url = uri("https://maven.ladysnake.org/releases")
+        content {
+            includeGroupAndSubgroups("dev.onyxstudios")
+            includeGroupAndSubgroups("org.ladysnake")
+        }
+    }
+    maven {
+        name = "Fabricators of Create (Snapshots)"
+        url = uri("https://mvn.devos.one/snapshots")
+        content {
+            includeGroupAndSubgroups("net.createmod")
+            includeGroupAndSubgroups("dev.engine-room")
+            includeGroupAndSubgroups("io.github.fabricators_of_create")
+            includeGroupAndSubgroups("com.simibubi")
+        }
+    }
+    maven {
+        name = "Fabricators of Create (Releases)"
+        url = uri("https://mvn.devos.one/releases")
+        content {
+            includeGroupAndSubgroups("net.createmod")
+            includeGroupAndSubgroups("dev.engine-room")
+            includeGroupAndSubgroups("io.github.fabricators_of_create")
+            includeGroupAndSubgroups("com.simibubi")
+        }
+    }
     repositories {
         exclusiveContent {
             forRepository {
@@ -102,6 +151,14 @@ repositories {
         url = uri("https://maven.gegy.dev/releases/")
         content {
             includeGroupAndSubgroups("dev.lambdaurora")
+        }
+    }
+    maven {
+        name = "Nucleoid Maven (Trinkets)"
+        url = uri("https://maven.nucleoid.xyz")
+        content {
+            includeGroupAndSubgroups("eu.pb4")
+            includeGroupAndSubgroups("xyz.nucleoid")
         }
     }
     mavenCentral()
@@ -126,6 +183,17 @@ dependencies {
     // McQoy
     modImplementation("dev.isxander:yet-another-config-lib:${property("deps.yacl")}")
     modImplementation("maven.modrinth:mcqoy:${property("deps.mcqoy")}")
+    // Trinkets
+    if (stonecutter.eval(mcVersion, "<1.21.4")) {
+        modCompileOnly("dev.emi:trinkets:${property("deps.trinkets")}") {
+            exclude(group = "net.fabricmc")
+        }
+    } else {
+        modCompileOnly("eu.pb4.fork:trinkets:${property("deps.trinkets")}") {
+            exclude(group = "net.fabricmc")
+        }
+    }
+    modImplementation("maven.modrinth:immersive-overlays:${property("deps.immersive_overlays")}")
     implementation("org.jspecify:jspecify:1.0.0")
 
 }
