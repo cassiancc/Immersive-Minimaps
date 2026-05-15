@@ -141,23 +141,25 @@ public class MinimapOverlay {
 	}
 
 	private int getXOffset() {
-		if (ModClient.CONFIG.left_align) {
-			return ModClient.CONFIG.xOffset;
+		if (ModClient.CONFIG.style.left_align) {
+			return ModClient.CONFIG.style.xOffset;
 		} else {
 			return mc.getWindow().getGuiScaledWidth()-6-width();
 		}
 	}
 
 	private int getYOffset() {
-		return ModClient.CONFIG.yOffset;
+		if (mc.player != null && !ModClient.CONFIG.style.left_align && MinimapHelpers.playerHasPotions(mc.player))
+			return ModClient.CONFIG.style.yOffset + MinimapHelpers.moveBy(mc.player);
+		else return ModClient.CONFIG.style.yOffset;
 	}
 
 	private int width() {
-		return ModClient.CONFIG.size;
+		return ModClient.CONFIG.style.size;
 	}
 
 	private int height() {
-		return ModClient.CONFIG.size;
+		return ModClient.CONFIG.style.size;
 	}
 
 	private void renderPlayer(GuiGraphicsExtractor guiGraphics, boolean online, float yaw, Vec3 pos, ResourceKey<Level> dimension, UUID uuid) {

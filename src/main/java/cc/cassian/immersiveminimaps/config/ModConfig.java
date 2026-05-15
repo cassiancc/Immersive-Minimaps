@@ -9,35 +9,23 @@ import folk.sisby.kaleido.lib.quiltconfig.api.values.ValueList;
 public class ModConfig extends WrappedConfig {
 
 	@DisplayName("Enable Minimap")
+	@Comment("Whether to show a minimap.")
 	public boolean minimap_enable = true;
-	@Comment("Anchor the minimap to the left edge of the screen. Disable to anchor it to the right edge of the screen.")
-	public boolean left_align = true;
-	@Comment("Status effects move overlays down")
-	@Comment("NOT YET IMPLEMENTED")
+	@Comment("When right aligned, status effects move the minimap down")
 	public boolean moved_by_effects = true;
 	@Comment("Hide the minimap when the F3 menu is open.")
 	public boolean hide_from_debug = true;
 	@Comment("Default scale to open the minimap to.")
 	public int default_scale = -1;
-	@Comment("How large to render the minimap.")
-	public int size = 80;
-	@Comment("Horizontal offset from the edge of the screen.")
-	@IntegerRange(max = 500, min = 0)
-	public int xOffset = 5;
-	@Comment("Vertical offset from the edge of the screen.")
-	@IntegerRange(max = 500, min = 0)
-	public int yOffset = 5;
 
 	@Comment({"Options to change the visuals of the map to be more or less vanilla-style."})
 	public Requirements requirements = new Requirements();
-
-
 	public static class Requirements implements WrappedConfig.Section {
 		@DisplayName("Immersive Overlays Bridge")
 		@Comment("When present, Immersive Overlays can be used to gain a large amount of mod compatibility with third-party backpacks and accessory mods, and its requirements will be used rather than the configs set in Immersive Minimaps.")
 		public boolean immersive_overlays_bridge = true;
 		@DisplayName("Require item")
-		@Comment("Require an item to activate overlays. This is the intended way to use the mod.")
+		@Comment("Require an item to activate the minimap. This is the intended way to use the mod.")
 		public boolean require_item = true;
 		@Comment("Require the item in hand.")
 		public boolean require_item_in_hand = false;
@@ -48,12 +36,25 @@ public class ModConfig extends WrappedConfig {
 		@Comment("As an example, allows for a compass inside a bundle inside a Shulker Box to count.")
 		public boolean search_containers_for_containers = true;
 		@DisplayName("Items that show minimap overlay")
+		@Comment("When the following items are in the inventory, show the minimap.")
 		public ValueList<String> items = ValueList.create("", "minecraft:map", "minecraft:filled_map");
 	}
 
+	@DisplayName("Style and Position")
 	@Comment({"Options to change the visuals of the map to be more or less vanilla-style."})
 	public Style style = new Style();
 	public static class Style implements WrappedConfig.Section {
+		@Comment("How large to render the minimap.")
+		@IntegerRange(max = 500, min = 0)
+		public int size = 80;
+		@Comment("Anchor the minimap to the left edge of the screen. Disable to anchor it to the right edge of the screen.")
+		public boolean left_align = true;
+		@Comment("Horizontal offset from the edge of the screen.")
+		@IntegerRange(max = 500, min = 0)
+		public int xOffset = 5;
+		@Comment("Vertical offset from the edge of the screen.")
+		@IntegerRange(max = 500, min = 0)
+		public int yOffset = 5;
 		@Comment("Whether to render a background behind the map.")
 		public boolean draw_background = true;
 	}

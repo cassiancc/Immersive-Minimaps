@@ -37,38 +37,44 @@ public class MinimapHelpers {
 		}
 	}
 
-	public static boolean playerHasPotions(Player player, boolean leftAlign) {
+	public static boolean playerHasPotions(Player player) {
 		if (!CONFIG.moved_by_effects) return false;
-		if (!leftAlign) return false;
 		// Technically, we should check whether these are ambient,
 		// but Map Atlases doesn't and still covers our overlay.
 		// return Player.areAllEffectsAmbient(player.getActiveEffects());
 		return !player.getActiveEffects().isEmpty();
 	}
 
-	//? if >1.21 {
 	public static int moveBy(Player player) {
 		boolean hasBeneficial =
-				player.getActiveEffects().stream().anyMatch(p -> p.getEffect().value().isBeneficial());
+				player.getActiveEffects().stream().anyMatch(p -> p.getEffect()
+						//? if >1.21
+						.value()
+						.isBeneficial());
 		boolean hasNegative =
-				player.getActiveEffects().stream().anyMatch(p -> !p.getEffect().value().isBeneficial());
-		if (hasNegative) {
-			return 42;
-		} else if (hasBeneficial) {
-			return 16;
-		}
+				player.getActiveEffects().stream().anyMatch(p -> !p.getEffect()
+						//? if >1.21
+						.value()
+						.isBeneficial());
+		if (hasNegative) return 50;
+		else if (hasBeneficial) return 24;
 		else return 0;
 	}
-	//?}
 
 	public static boolean shouldCancelRender(Minecraft mc) {
 		if (mc.options.hideGui) return true;
 		if (!CONFIG.minimap_enable) return true;
-		//? if >26 {
 		if (CONFIG.hide_from_debug) {
-			return mc.debugEntries.isOverlayVisible();
+			return
+			//? if >1.21.10 {
+			mc.debugEntries.isOverlayVisible();
+			 //?} else if >1.21 {
+			/*mc.getDebugOverlay().showDebugScreen();
+			*///?} else {
+			/*mc.options.renderDebug;
+			 *///?}
 		}
-		//?}
+
 		return false;
 	}
 
@@ -92,6 +98,7 @@ public class MinimapHelpers {
 	}
 
 	public static void checkInventoryForItems(@Nullable Player player) {
+		// use immersive overlays config instead
 		if (ModCompat.IMMERSIVE_OVERLAYS && CONFIG.requirements.immersive_overlays_bridge) return;
 		if (CONFIG.requirements.require_item) {
 			MinimapOverlay.showMinimap = false;

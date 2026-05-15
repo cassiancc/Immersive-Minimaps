@@ -16,6 +16,8 @@ tasks.named<ProcessResources>("processResources") {
     val props = HashMap<String, String>().apply {
         this["version"] = prop("mod.version") + "+" + prop("deps.minecraft")
         this["minecraft"] = prop("mod.mc_dep_fabric")
+        this["mod_name"] = prop("mod.name")
+        this["mod_description"] = prop("mod.description")
     }
 
     filesMatching(listOf("fabric.mod.json", "META-INF/neoforge.mods.toml", "META-INF/mods.toml")) {
@@ -275,6 +277,7 @@ publishMods {
     version = "${property("mod.version")}+${property("deps.minecraft")}-fabric"
     changelog = provider { rootProject.file("CHANGELOG-LATEST.md").readText() }
     modLoaders.add("fabric")
+    modLoaders.add("neoforge")
 
     modrinth {
         projectId = property("publish.modrinth") as String
@@ -282,10 +285,11 @@ publishMods {
         minecraftVersions.add(stonecutter.current.version)
         minecraftVersions.addAll(additionalVersions)
         requires("fabric-api")
+        requires("connector")
         requires("hoofprint")
         requires("surveyor")
-        optional("cloth-config")
-
+        optional("mcqoy")
+        optional("immersive-overlays")
     }
 
     /*

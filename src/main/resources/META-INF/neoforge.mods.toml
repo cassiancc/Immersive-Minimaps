@@ -1,0 +1,27 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+
+issueTrackerURL="https://github.com/cassiancc/Immersive-Minimaps/issues"
+displayURL="https://modrinth.com/project/immersive-minimaps/"
+logoFile= "assets/immersiveminimaps/icon.png"
+authors="cassiancc"
+license="LGPL-3.0-or-later"
+
+[[mods]]
+modId="immersiveminimaps"
+version="${mod_version}"
+displayName="Immersive Minimaps"
+description="${mod_description}"
+
+[[dependencies.immersiveminimaps]]
+modId="connector"
+mandatory=true
+versionRange="*"
+ordering="NONE"
+side="BOTH"
+
+[[mixins]]
+config = "immersiveminimaps.mixins.json"
+
+[properties]
+"connector:placeholder"=true

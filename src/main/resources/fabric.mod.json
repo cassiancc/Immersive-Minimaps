@@ -2,8 +2,8 @@
 	"schemaVersion": 1,
 	"id": "immersiveminimaps",
 	"version": "${version}",
-	"name": "Immersive Minimaps",
-	"description": "A minimalist, client-side minimap that integrates Hoofprint into the player's UI, allowing it to only be visible as long as the player has a map.",
+	"name": "${mod_name}",
+	"description": "${mod_description}",
 	"authors": [
 		"cassiancc"
 	],
