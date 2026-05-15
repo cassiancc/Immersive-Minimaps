@@ -123,12 +123,13 @@ public class MinimapOverlay {
 			}
 		}
 
+		// can only test this via LAN and that's causing some weirdness - disabled the whole thing for now.
 //		SurveyorClient.getFriends().forEach((uuidx, playerx) -> this.renderPlayer(guiGraphics, playerx.online(), playerx.yaw(), playerx.pos(), playerx.dimension(), uuidx));
-		var player = mc.player;
-		this.renderPlayer(guiGraphics, true, player.getYRot(), player.position(), player.level().dimension(), SurveyorClient.getClientUuid());
+		var player = Objects.requireNonNull(mc.player);
 		try {
 			mapStorage.landmarks.values().forEach((landmarkx) -> this.renderLandmark(guiGraphics, landmarkx, scaleFactor));
 		} catch (Exception ignored) {} // threw exception on toybox map, unsure how to recreate and low priority
+		this.renderPlayer(guiGraphics, true, player.getYRot(), player.position(), player.level().dimension(), SurveyorClient.getClientUuid());
 		drawBackground(guiGraphics, FRAME);
 	}
 
@@ -269,7 +270,7 @@ public class MinimapOverlay {
 				translate(guiGraphics, getXOffset(), getYOffset());
 				translate(guiGraphics, (float)landmarkScreenX, (float)landmarkScreenY);
 
-				if (landmarkScreenX < width() && landmarkScreenY < height() && landmarkScreenX > 0 && landmarkScreenY > 0) {
+				if (landmarkScreenX < width() && landmarkScreenY < height() && landmarkScreenX > 0 && landmarkScreenY > 6) {
 					if (landmark.contains(LandmarkComponentTypes.STACK) && !landmark.get(LandmarkComponentTypes.STACK).isEmpty()) {
 						ItemStack stack = landmark.get(LandmarkComponentTypes.STACK);
 						guiGraphics.fakeItem(stack, -8, -8);
