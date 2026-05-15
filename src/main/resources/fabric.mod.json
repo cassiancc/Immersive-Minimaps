@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "immersiveminimaps",
-	"version": "${version}",
+	"version": "${mod_version}",
 	"name": "${mod_name}",
 	"description": "${mod_description}",
 	"authors": [
@@ -27,8 +27,8 @@
 		"fabricloader": "*",
 		"minecraft": "${minecraft}",
 		"fabric-api": "*",
-		"surveyor": "*",
-		"hoofprint": "*"
+		"surveyor": ">=1.0.0",
+		"hoofprint": ">=1.0.0"
 	},
 	"recommends": {
 		"immersiveoverlays": "*"

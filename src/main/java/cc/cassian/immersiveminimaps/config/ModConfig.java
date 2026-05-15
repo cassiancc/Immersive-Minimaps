@@ -57,5 +57,7 @@ public class ModConfig extends WrappedConfig {
 		public int yOffset = 5;
 		@Comment("Whether to render a background behind the map.")
 		public boolean draw_background = true;
+		@Comment("Whether to render landmarks on the map.")
+		public boolean draw_landmarks = true;
 	}
 }

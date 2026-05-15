@@ -39,7 +39,6 @@ public class MinimapOverlay {
 	private double centreZ = 0.0F;
 	private @Nullable Integer guiScale = null;
 	private boolean caveMode = false;
-	private final boolean hideDecorations = false;
 	private @Nullable ResourceKey<Level> dim;
 	private final Minecraft mc = Minecraft.getInstance();
 	public static MinimapOverlay INSTANCE = new MinimapOverlay();
@@ -101,7 +100,7 @@ public class MinimapOverlay {
 		for(@Nullable Landmark landmark : mapStorage.landmarks.values()) {
 			if (landmark != null) {
 				BlockPos pos = landmark.get(LandmarkComponentTypes.POS);
-				if (!this.hideDecorations) {
+				if (!ModClient.CONFIG.style.draw_landmarks) {
 					if (pos == null) {
 						for(ChunkPos chunk : RegionPos.regionsToChunks(landmark.getOrDefault(LandmarkComponentTypes.CHUNKS, new HashMap<>()))) {
 							double screenX = this.renderToScreen(this.worldXToRenderX(chunk.getMinBlockX()));
@@ -166,7 +165,7 @@ public class MinimapOverlay {
 	private void renderPlayer(GuiGraphicsExtractor guiGraphics, boolean online, float yaw, Vec3 pos, ResourceKey<Level> dimension, UUID uuid) {
 		boolean friend = !SurveyorClient.getClientUuid().equals(uuid);
 		boolean inDim = dimension.equals(this.dim);
-		if ((!friend || inDim) && (online) && !this.hideDecorations) {
+		if ((!friend || inDim) && (online)) {
 			double dimX = pos.x();
 			double dimZ = pos.z();
 			double playerScreenX = this.renderToScreen(this.worldXToRenderX(dimX));
@@ -222,7 +221,7 @@ public class MinimapOverlay {
 
 	private void renderLandmark(GuiGraphicsExtractor guiGraphics, Landmark landmark, float scaleFactor) {
 		BlockPos pos = landmark.get(LandmarkComponentTypes.POS);
-		if (!this.hideDecorations) {
+		if (!ModClient.CONFIG.style.draw_landmarks) {
 			if (pos == null) {
 				Set<ChunkPos> chunks = RegionPos.regionsToChunks(landmark.getOrDefault(LandmarkComponentTypes.CHUNKS, new HashMap<>()));
 				guiGraphics.pose().pushMatrix();
@@ -270,10 +269,11 @@ public class MinimapOverlay {
 				translate(guiGraphics, getXOffset(), getYOffset());
 				translate(guiGraphics, (float)landmarkScreenX, (float)landmarkScreenY);
 
-				if (landmarkScreenX < width() && landmarkScreenY < height() && landmarkScreenX > 0 && landmarkScreenY > 6) {
+				if (landmarkScreenX < (width()-2) && landmarkScreenY < height() && landmarkScreenX > 4 && landmarkScreenY > 4) {
 					if (landmark.contains(LandmarkComponentTypes.STACK) && !landmark.get(LandmarkComponentTypes.STACK).isEmpty()) {
 						ItemStack stack = landmark.get(LandmarkComponentTypes.STACK);
-						guiGraphics.fakeItem(stack, -8, -8);
+						if (landmarkScreenY < height()-4)
+							guiGraphics.fakeItem(stack, -8, -8);
 					} else {
 						MinimapHelpers.blit(
 								guiGraphics,
@@ -327,11 +327,6 @@ public class MinimapOverlay {
 
 	double screenXToWorldX(double screenX) {
 		return screenX / (double)this.getScaleFactor() + this.centreX - (double)this.getWidth() / (double)2.0F;
-	}
-
-	private int rightAlign(int i) {
-		int windowWidth = mc.getWindow().getWidth();
-		return (windowWidth-width()-8)/guiScale;
 	}
 
 	double screenYToWorldZ(double screenY) {

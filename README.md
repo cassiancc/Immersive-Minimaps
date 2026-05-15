@@ -13,7 +13,7 @@ A minimap overlay displaying the player's surroundings is visible whenever the p
 
 ## Installation
 
-Immersive Minimaps is a client and server mod. Its dependencies are listed below.
+Immersive Minimaps is a clientside mod. Its dependencies are listed below.
 
 ### Dependencies
 - On Fabric, [Fabric API](https://modrinth.com/mod/fabric-api) is required.
@@ -39,6 +39,8 @@ Immersive Minimaps is an addon for Hoofprint, which makes use of the for [Survey
 ## Credits
 
 This mod reuses some code from [Hoofprint](https://modrinth.com/mod/hoofprint) under its [LGPL License](https://github.com/HestiMae/hoofprint/blob/26.1/LICENSE).
+
+Mod icon is by [nöelle](https://modrinth.com/user/noelledotjpg).
 
 The [Surveyor ecosystem](https://modrinth.com/collection/fUFr3Mvj) is trying to make mapping more accessible! (and open-source)
 Feel free to contribute improvements to [Immersive Minimaps](https://github.com/cassiancc/Immersive-Overlays/issues), [Hoofprint](https://github.com/HestiMae/hoofprint/issues) or [Surveyor](https://github.com/sisby-folk/surveyor/issues), or utilize Surveyor for your own mods!

@@ -4,7 +4,7 @@ license = "LGPL-3.0-or-later"
 
 [[mods]]
 modId = "immersiveminimaps"
-version = "${version}"
+version = "${mod_version}"
 displayName = "${mod_name}"
 authors = "cassiancc"
 description = '''
