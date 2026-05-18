@@ -95,8 +95,24 @@ public class MinimapOverlay {
 		}
 
 		guiGraphics.pose().popMatrix();
-		double bestDistance = Double.MAX_VALUE;
+		// render landmarks
+		renderLandmarks(guiGraphics, scaleFactor);
+		// render players
+		var player = Objects.requireNonNull(mc.player);
+		if (ModClient.CONFIG.style.draw_players) {
+			var onlinePlayerIds = player.connection.getOnlinePlayerIds();
+			SurveyorClient.getFriends().forEach((friendId, friendSummary) -> this.renderPlayer(guiGraphics, friendSummary.online() && onlinePlayerIds.contains(friendId), friendSummary.yaw(), friendSummary.pos(), friendSummary.dimension(), friendId));
+		}
+		this.renderPlayer(guiGraphics, true, player.getYRot(), player.position(), player.level().dimension(), SurveyorClient.getClientUuid());
+		// render frame
+		drawBackground(guiGraphics, FRAME);
+	}
 
+	private void renderLandmarks(GuiGraphicsExtractor guiGraphics, float scaleFactor) {
+		double bestDistance = Double.MAX_VALUE;
+		var mapStorage = mapStorage();
+
+		// prep landmarks
 		for(@Nullable Landmark landmark : mapStorage.landmarks.values()) {
 			if (landmark != null) {
 				BlockPos pos = landmark.get(LandmarkComponentTypes.POS);
@@ -121,15 +137,10 @@ public class MinimapOverlay {
 				}
 			}
 		}
-
-		// can only test this via LAN and that's causing some weirdness - disabled the whole thing for now.
-//		SurveyorClient.getFriends().forEach((uuidx, playerx) -> this.renderPlayer(guiGraphics, playerx.online(), playerx.yaw(), playerx.pos(), playerx.dimension(), uuidx));
-		var player = Objects.requireNonNull(mc.player);
+		// render landmarks
 		try {
 			mapStorage.landmarks.values().forEach((landmarkx) -> this.renderLandmark(guiGraphics, landmarkx, scaleFactor));
 		} catch (Exception ignored) {} // threw exception on toybox map, unsure how to recreate and low priority
-		this.renderPlayer(guiGraphics, true, player.getYRot(), player.position(), player.level().dimension(), SurveyorClient.getClientUuid());
-		drawBackground(guiGraphics, FRAME);
 	}
 
 	private void drawBackground(GuiGraphicsExtractor guiGraphics, Identifier frame) {
@@ -165,36 +176,38 @@ public class MinimapOverlay {
 	private void renderPlayer(GuiGraphicsExtractor guiGraphics, boolean online, float yaw, Vec3 pos, ResourceKey<Level> dimension, UUID uuid) {
 		boolean friend = !SurveyorClient.getClientUuid().equals(uuid);
 		boolean inDim = dimension.equals(this.dim);
-		if ((!friend || inDim) && (online)) {
+		if (inDim && online) {
 			double dimX = pos.x();
 			double dimZ = pos.z();
 			double playerScreenX = this.renderToScreen(this.worldXToRenderX(dimX));
 			double playerScreenY = this.renderToScreen(this.worldZToRenderY(dimZ));
+			double clampedX = this.clampScreenX(playerScreenX);
+			double clampedY = this.clampScreenY(playerScreenY);
 			guiGraphics.pose().pushMatrix();
 			translate(guiGraphics, getXOffset(), getYOffset());
-			boolean clipped = playerScreenX != playerScreenX || playerScreenY != playerScreenY;
-			translate(guiGraphics, (float)playerScreenX, (float)playerScreenY);
-			int tint = !online ? 77 : (255);
-			int argb = color(255, (friend ? 0 : 255) * tint / 255, (inDim ? 255 : 204) * tint / 255, (friend ? 76 : 255) * tint / 255);
-			if (!(Math.abs(playerScreenX - playerScreenX) > (double)this.width()) && !(Math.abs(playerScreenY - playerScreenY) > (double)this.height())) {
-				if (clipped) {
-					translate(guiGraphics,-3.0F, -3.0F);
-					MinimapHelpers.blit(
-							guiGraphics,
-							ModClient.withVanillaNamespace("textures/map/decorations/player_off_map.png"), 0, 0, 1.0F, 1.0F, 6, 6, 6, 6, 8, 8, argb);
-				} else {
-					float playerRotation = (float)Math.round(yaw / 360.0F * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360.0F;
-					//? if >1.21.2 {
-					guiGraphics.pose().rotate((float)Math.toRadians(180.0F + playerRotation));
-					//?} else {
-					/*guiGraphics.pose().mulPose(com.mojang.math.Axis.ZP.rotationDegrees(180.0F + playerRotation));
-					*///?}
-					translate(guiGraphics, -2.5F, -3.5F);
-					MinimapHelpers.blit(
-							guiGraphics,
-							ModClient.withVanillaNamespace("textures/map/decorations/player.png"), 0, 0, 2.0F, 0.0F, 5, 7, 5, 7, 8, 8, argb);
-				}
-			} else {
+			boolean clipped = clampedX != playerScreenX || clampedY != playerScreenY;
+			translate(guiGraphics, (float)clampedX, (float)clampedY);
+			int tint = 255;
+			int argb = color(255, (friend ? 0 : 255) * tint / 255, 255 * tint / 255, (friend ? 76 : 255) * tint / 255);
+			if (!(Math.abs(playerScreenX - clampedX) > (double)this.width()) && !(Math.abs(playerScreenY - clampedY) > (double)this.height())) {
+                if (!clipped) {
+                    float playerRotation = (float)Math.round(yaw / 360.0F * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360.0F;
+                    //? if >1.21.2 {
+                    guiGraphics.pose().rotate((float)Math.toRadians(180.0F + playerRotation));
+                    //?} else {
+                    /*guiGraphics.pose().mulPose(com.mojang.math.Axis.ZP.rotationDegrees(180.0F + playerRotation));
+                    *///?}
+                    translate(guiGraphics, -2.5F, -3.5F);
+                    MinimapHelpers.blit(
+                            guiGraphics,
+                            ModClient.withVanillaNamespace("textures/map/decorations/player.png"), 0, 0, 2.0F, 0.0F, 5, 7, 5, 7, 8, 8, argb);
+                } else if (ModClient.CONFIG.style.draw_offscreen_players) {
+                    translate(guiGraphics,-3.0F, -3.0F);
+                    MinimapHelpers.blit(
+                            guiGraphics,
+                            ModClient.withVanillaNamespace("textures/map/decorations/player_off_map.png"), 0, 0, 1.0F, 1.0F, 6, 6, 6, 6, 8, 8, argb);
+                }
+            } else if (ModClient.CONFIG.style.draw_offscreen_players) {
 				translate(guiGraphics, -2.0F, -2.0F);
 				MinimapHelpers.blit(
 						guiGraphics,
@@ -360,8 +373,8 @@ public class MinimapOverlay {
 		var mapStorage = mapStorage();
 		double borderX1 = this.renderToScreen(this.worldXToRenderX(Math.max((int)Math.floor(worldBorder.getCenterX() - size / (double)2.0F), mapStorage.minBlockX)));
 		double borderX2 = this.renderToScreen(this.worldXToRenderX(Math.min((int)Math.ceil(worldBorder.getCenterX() + size / (double)2.0F), mapStorage.maxBlockX)));
-		double minX = Math.min(borderX2, 0.0F);
-		double maxX = Math.max(borderX1, width());
+		double minX = Math.min(borderX2, 2.0F);
+		double maxX = Math.max(borderX1, width()-2);
 		return Mth.clamp(x, minX, maxX);
 	}
 
@@ -371,8 +384,8 @@ public class MinimapOverlay {
 		var mapStorage = mapStorage();
 		double borderZ1 = this.renderToScreen(this.worldZToRenderY(Math.max((int)Math.floor(worldBorder.getCenterZ() - size / (double)2.0F), mapStorage.minBlockZ)));
 		double borderZ2 = this.renderToScreen(this.worldZToRenderY(Math.min((int)Math.ceil(worldBorder.getCenterZ() + size / (double)2.0F), mapStorage.maxBlockZ)));
-		double minY = Math.min(borderZ2, 0.0F);
-		double maxY = Math.max(borderZ1, height());
+		double minY = Math.min(borderZ2, 2.0F);
+		double maxY = Math.max(borderZ1, height()-2);
 		return Mth.clamp(y, minY, maxY);
 	}
 }

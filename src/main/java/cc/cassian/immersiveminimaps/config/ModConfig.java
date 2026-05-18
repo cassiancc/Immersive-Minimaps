@@ -63,5 +63,9 @@ public class ModConfig extends WrappedConfig {
 		public boolean draw_background = true;
 		@Comment("Whether to render landmarks on the map.")
 		public boolean draw_landmarks = true;
-	}
+		@Comment("Whether to render nearby players on the map.")
+		public boolean draw_players = true;
+		@Comment("Whether to render far-off players on the map.")
+		public boolean draw_offscreen_players = false;
+    }
 }
