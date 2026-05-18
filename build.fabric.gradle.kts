@@ -279,21 +279,24 @@ publishMods {
         minecraftVersions.addAll(additionalVersions)
         requires("fabric-api")
         if (stonecutter.eval(mcVersion, "=1.21.1") || stonecutter.eval(mcVersion, "=1.20.1"))
-            requires("connector")
+            requires("sinytra-connector")
         requires("hoofprint")
         requires("surveyor")
         optional("mcqoy")
         optional("immersive-overlays")
     }
 
-    /*
     curseforge {
         projectId = property("publish.curseforge") as String
         accessToken = env.CURSEFORGE_API_KEY.orNull()
         minecraftVersions.add(stonecutter.current.version)
         minecraftVersions.addAll(additionalVersions)
         requires("fabric-api")
+        if (stonecutter.eval(mcVersion, "=1.21.1") || stonecutter.eval(mcVersion, "=1.20.1"))
+            requires("sinytra-connector")
+        requires("hoofprint")
+        requires("surveyor-map-framework")
+        optional("mcqoy")
+        optional("immersive-overlays")
     }
-
-     */
 }

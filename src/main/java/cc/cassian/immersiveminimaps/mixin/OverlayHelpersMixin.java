@@ -22,7 +22,7 @@ public class OverlayHelpersMixin {
 
     @Inject(method = "setOverlays", at = @At(value = "HEAD"))
     private static void minimapRequireItem(boolean b, CallbackInfo ci) {
-        if (ModClient.CONFIG.requirements.immersive_overlays_bridge && b)
-            MinimapOverlay.showMinimap = true;
+        if (ModClient.CONFIG.requirements.immersive_overlays_bridge)
+            MinimapOverlay.showMinimap = b;
     }
 }

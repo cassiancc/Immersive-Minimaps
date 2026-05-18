@@ -233,7 +233,7 @@ publishMods {
         optional("immersive-overlays")
     }
 
-    /*
+
     curseforge {
         projectId = property("publish.curseforge") as String
         accessToken = env.CURSEFORGE_API_KEY.orNull()
@@ -241,8 +241,6 @@ publishMods {
         minecraftVersions.addAll(additionalVersions)
         requires("fabric-api")
         requires("hoofprint")
-        requires("surveyor")
+        requires("surveyor-map-framework")
     }
-
-     */
 }
