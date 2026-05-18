@@ -269,6 +269,6 @@ public class MinimapHelpers {
     }
 
 	public static boolean shouldSearchInsideImmersiveOverlaysContainers() {
-		return shouldUseImmersiveOverlaysSettings() && CONFIG.requirements.require_item && CONFIG.requirements.search_containers;
+		return shouldUseImmersiveOverlaysSettings() && CONFIG.requirements.require_item && CONFIG.requirements.search_containers && !CONFIG.requirements.require_item_in_hand;
 	}
 }

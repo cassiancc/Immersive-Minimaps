@@ -19,6 +19,7 @@ import net.minecraft.client.DeltaTracker;
 //?}
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -61,7 +62,7 @@ public class MinimapOverlay {
 		translate(guiGraphics, getXOffset(), getYOffset());
 		float scaleFactor = this.getScaleFactor();
 		scale(guiGraphics, scaleFactor, scaleFactor);
-		WorldBorder worldBorder = this.mc.level.getWorldBorder();
+		WorldBorder worldBorder = getWorldBorder();
 		double size = worldBorder.getSize();
 		int borderX1 = Math.max((int)Math.floor(worldBorder.getCenterX() - size / (double)2.0F), mapStorage.minBlockX);
 		int borderX2 = Math.min((int)Math.ceil(worldBorder.getCenterX() + size / (double)2.0F), mapStorage.maxBlockX);
@@ -101,8 +102,12 @@ public class MinimapOverlay {
 		var player = Objects.requireNonNull(mc.player);
 		if (ModClient.CONFIG.style.draw_players) {
 			var onlinePlayerIds = player.connection.getOnlinePlayerIds();
-			SurveyorClient.getFriends().forEach((friendId, friendSummary) -> this.renderPlayer(guiGraphics, friendSummary.online() && onlinePlayerIds.contains(friendId), friendSummary.yaw(), friendSummary.pos(), friendSummary.dimension(), friendId));
+			SurveyorClient.getFriends().forEach((friendId, friendSummary) -> {
+				if (friendId != null && friendSummary != null)
+                	this.renderPlayer(guiGraphics, friendSummary.online() && onlinePlayerIds.contains(friendId), friendSummary.yaw(), friendSummary.pos(), friendSummary.dimension(), friendId);
+            });
 		}
+		// render singleplayer
 		this.renderPlayer(guiGraphics, true, player.getYRot(), player.position(), player.level().dimension(), SurveyorClient.getClientUuid());
 		// render frame
 		drawBackground(guiGraphics, FRAME);
@@ -139,7 +144,7 @@ public class MinimapOverlay {
 		}
 		// render landmarks
 		try {
-			mapStorage.landmarks.values().forEach((landmarkx) -> this.renderLandmark(guiGraphics, landmarkx, scaleFactor));
+			mapStorage.landmarks.values().forEach((landmark) -> this.renderLandmark(guiGraphics, landmark, scaleFactor));
 		} catch (Exception ignored) {} // threw exception on toybox map, unsure how to recreate and low priority
 	}
 
@@ -283,10 +288,10 @@ public class MinimapOverlay {
 				translate(guiGraphics, (float)landmarkScreenX, (float)landmarkScreenY);
 
 				if (landmarkScreenX < (width()-2) && landmarkScreenY < height() && landmarkScreenX > 4 && landmarkScreenY > 4) {
-					if (landmark.contains(LandmarkComponentTypes.STACK) && !landmark.get(LandmarkComponentTypes.STACK).isEmpty()) {
+					if (landmark.contains(LandmarkComponentTypes.STACK) && !Objects.requireNonNull(landmark.get(LandmarkComponentTypes.STACK)).isEmpty()) {
 						ItemStack stack = landmark.get(LandmarkComponentTypes.STACK);
 						if (landmarkScreenY < height()-4)
-							guiGraphics.fakeItem(stack, -8, -8);
+							guiGraphics.fakeItem(Objects.requireNonNullElse(stack, ItemStack.EMPTY), -8, -8);
 					} else {
 						MinimapHelpers.blit(
 								guiGraphics,
@@ -320,9 +325,9 @@ public class MinimapOverlay {
 		guiScale = Mth.clamp(newGuiScale, 1, 5);
 	}
 
-	public void tick() {
-		this.centreX = this.mc.player.getBlockX();
-		this.centreZ = this.mc.player.getBlockZ();
+	public void tick(LocalPlayer player) {
+		this.centreX = player.getBlockX();
+		this.centreZ = player.getBlockZ();
 	}
 
 	public void changeDim(ResourceKey<Level> newDim) {
@@ -368,7 +373,7 @@ public class MinimapOverlay {
 	}
 
 	double clampScreenX(double x) {
-		WorldBorder worldBorder = this.mc.level.getWorldBorder();
+		WorldBorder worldBorder = getWorldBorder();
 		double size = worldBorder.getSize();
 		var mapStorage = mapStorage();
 		double borderX1 = this.renderToScreen(this.worldXToRenderX(Math.max((int)Math.floor(worldBorder.getCenterX() - size / (double)2.0F), mapStorage.minBlockX)));
@@ -378,8 +383,12 @@ public class MinimapOverlay {
 		return Mth.clamp(x, minX, maxX);
 	}
 
+	private WorldBorder getWorldBorder() {
+		return Objects.requireNonNull(this.mc.level).getWorldBorder();
+	}
+
 	double clampScreenY(double y) {
-		WorldBorder worldBorder = this.mc.level.getWorldBorder();
+		WorldBorder worldBorder = getWorldBorder();
 		double size = worldBorder.getSize();
 		var mapStorage = mapStorage();
 		double borderZ1 = this.renderToScreen(this.worldZToRenderY(Math.max((int)Math.floor(worldBorder.getCenterZ() - size / (double)2.0F), mapStorage.minBlockZ)));

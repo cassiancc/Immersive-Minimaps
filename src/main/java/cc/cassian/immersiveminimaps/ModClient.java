@@ -111,7 +111,7 @@ public class ModClient implements ClientModInitializer {
 			MinimapOverlay.INSTANCE.init();
 			MinimapOverlay.INSTANCE.changeDim(minecraft.level.dimension());
 			MinimapHelpers.checkInventoryForOverlays(minecraft);
-			MinimapOverlay.INSTANCE.tick();
+			MinimapOverlay.INSTANCE.tick(minecraft.player);
 		}
 	}
 }
