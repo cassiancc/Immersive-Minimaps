@@ -56,7 +56,7 @@ public class MinimapOverlay {
 	public void extractRenderState(GuiGraphicsExtractor guiGraphics, float deltaTracker) {
 		if (MinimapHelpers.shouldCancelRender(mc) || !showMinimap) return;
 		drawBackground(guiGraphics, BACKGROUND);
-		HoofprintMapStorage mapStorage = mapStorage();
+		var mapStorage = mapStorage();
 		guiGraphics.pose().pushMatrix();
 		translate(guiGraphics, getXOffset(), getYOffset());
 		float scaleFactor = this.getScaleFactor();
@@ -357,7 +357,7 @@ public class MinimapOverlay {
 	double clampScreenX(double x) {
 		WorldBorder worldBorder = this.mc.level.getWorldBorder();
 		double size = worldBorder.getSize();
-		HoofprintMapStorage mapStorage = mapStorage();
+		var mapStorage = mapStorage();
 		double borderX1 = this.renderToScreen(this.worldXToRenderX(Math.max((int)Math.floor(worldBorder.getCenterX() - size / (double)2.0F), mapStorage.minBlockX)));
 		double borderX2 = this.renderToScreen(this.worldXToRenderX(Math.min((int)Math.ceil(worldBorder.getCenterX() + size / (double)2.0F), mapStorage.maxBlockX)));
 		double minX = Math.min(borderX2, 0.0F);
@@ -368,7 +368,7 @@ public class MinimapOverlay {
 	double clampScreenY(double y) {
 		WorldBorder worldBorder = this.mc.level.getWorldBorder();
 		double size = worldBorder.getSize();
-		HoofprintMapStorage mapStorage = mapStorage();
+		var mapStorage = mapStorage();
 		double borderZ1 = this.renderToScreen(this.worldZToRenderY(Math.max((int)Math.floor(worldBorder.getCenterZ() - size / (double)2.0F), mapStorage.minBlockZ)));
 		double borderZ2 = this.renderToScreen(this.worldZToRenderY(Math.min((int)Math.ceil(worldBorder.getCenterZ() + size / (double)2.0F), mapStorage.maxBlockZ)));
 		double minY = Math.min(borderZ2, 0.0F);

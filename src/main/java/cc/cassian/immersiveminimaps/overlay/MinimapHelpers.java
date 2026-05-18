@@ -99,7 +99,7 @@ public class MinimapHelpers {
 
 	public static void checkInventoryForItems(@Nullable Player player) {
 		// use immersive overlays config instead
-		if (ModCompat.IMMERSIVE_OVERLAYS && CONFIG.requirements.immersive_overlays_bridge) return;
+		if (ModCompat.IMMERSIVE_OVERLAYS && shouldUseBridge()) return;
 		if (CONFIG.requirements.require_item) {
 			MinimapOverlay.showMinimap = false;
 			if (player == null)
@@ -263,4 +263,8 @@ public class MinimapHelpers {
 			hasBeenToggled = false;
 		}
 	}
+
+    public static boolean shouldUseBridge() {
+        return CONFIG.immersive_overlays_bridge && CONFIG.requirements.require_item && CONFIG.requirements.search_containers;
+    }
 }

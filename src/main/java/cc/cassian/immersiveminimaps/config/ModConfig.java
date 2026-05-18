@@ -17,13 +17,17 @@ public class ModConfig extends WrappedConfig {
 	public boolean hide_from_debug = true;
 	@Comment("Default scale to open the minimap to.")
 	public int default_scale = -1;
+	@DisplayName("Apply requirements to Hoofprint")
+	@Comment("Whether to apply Immersive Minimaps and Immersive Overlays requirements to Hoofprint's screen.")
+	public boolean hoofprint_bridge = true;
+	@DisplayName("Immersive Overlays Bridge")
+	@Comment("When present, Immersive Overlays can be used to gain a large amount of mod compatibility with third-party backpacks and accessory mods, and its requirements will be used rather than the configs set in Immersive Minimaps.")
+	public boolean immersive_overlays_bridge = true;
 
 	@Comment({"Options to change the visuals of the map to be more or less vanilla-style."})
 	public Requirements requirements = new Requirements();
-	public static class Requirements implements WrappedConfig.Section {
-		@DisplayName("Immersive Overlays Bridge")
-		@Comment("When present, Immersive Overlays can be used to gain a large amount of mod compatibility with third-party backpacks and accessory mods, and its requirements will be used rather than the configs set in Immersive Minimaps.")
-		public boolean immersive_overlays_bridge = true;
+    public static class Requirements implements WrappedConfig.Section {
+
 		@DisplayName("Require item")
 		@Comment("Require an item to activate the minimap. This is the intended way to use the mod.")
 		public boolean require_item = true;

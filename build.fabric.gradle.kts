@@ -136,16 +136,14 @@ repositories {
             includeGroupAndSubgroups("com.simibubi")
         }
     }
-    repositories {
-        exclusiveContent {
-            forRepository {
-                maven {
-                    url = uri("https://cursemaven.com")
-                }
+    exclusiveContent {
+        forRepository {
+            maven {
+                url = uri("https://cursemaven.com")
             }
-            filter {
-                includeGroup ("curse.maven")
-            }
+        }
+        filter {
+            includeGroup ("curse.maven")
         }
     }
     maven {
@@ -197,6 +195,10 @@ dependencies {
     }
     modImplementation("maven.modrinth:immersive-overlays:${property("deps.immersive_overlays")}")
     implementation("org.jspecify:jspecify:1.0.0")
+
+    // Mixin Constraints - embedded
+    implementation("com.moulberry:mixinconstraints:1.0.9")
+    include("com.moulberry:mixinconstraints:1.0.9")
 
 }
 

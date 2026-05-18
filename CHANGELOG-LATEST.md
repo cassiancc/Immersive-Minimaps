@@ -1,2 +1,2 @@
-### Fixed
-- Immersive Overlays bridge now works as expected.
+### Added
+- Immersive Minimaps requirements can now be applied to opening the Hoofprint screen.

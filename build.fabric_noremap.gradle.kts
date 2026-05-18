@@ -152,6 +152,10 @@ dependencies {
     implementation("maven.modrinth:mcqoy:${property("deps.mcqoy")}")
     implementation("maven.modrinth:immersive-overlays:${property("deps.immersive_overlays")}")
 
+    // Mixin Constraints - embedded
+    implementation("com.moulberry:mixinconstraints:1.0.9")
+    include("com.moulberry:mixinconstraints:1.0.9")
+
 }
 
 configurations.all {
