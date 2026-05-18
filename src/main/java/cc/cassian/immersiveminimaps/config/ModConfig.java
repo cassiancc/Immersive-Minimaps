@@ -19,7 +19,7 @@ public class ModConfig extends WrappedConfig {
 	public int default_scale = -1;
 	@DisplayName("Apply requirements to Hoofprint")
 	@Comment("Whether to apply Immersive Minimaps and Immersive Overlays requirements to Hoofprint's screen.")
-	public boolean hoofprint_bridge = true;
+	public boolean apply_requirements_to_hoofprint = true;
 	@DisplayName("Immersive Overlays Bridge")
 	@Comment("When present, Immersive Overlays can be used to gain a large amount of mod compatibility with third-party backpacks and accessory mods, and its requirements will be used rather than the configs set in Immersive Minimaps.")
 	public boolean immersive_overlays_bridge = true;

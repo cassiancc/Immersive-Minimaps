@@ -2,16 +2,15 @@
 	"required": true,
 	"package": "cc.cassian.immersiveminimaps.mixin",
 	"compatibilityLevel": "JAVA_17",
-	"mixins": [
-		"ImmersiveOverlayHelpersMixin"
-	],
 	"injectors": {
-		"defaultRequire": 1
+		"defaultRequire": 0
 	},
 	"overwrites": {
 		"requireAnnotations": true
 	},
 	"client": [
-		"HoofprintScreeenMixin"
+		"HoofprintMixin",
+		"HoofprintScreenMixin",
+		"ImmersiveOverlayHelpersMixin"
 	]
 }

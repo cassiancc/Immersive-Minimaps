@@ -281,7 +281,7 @@ publishMods {
         minecraftVersions.addAll(additionalVersions)
         requires("fabric-api")
         if (stonecutter.eval(mcVersion, "=1.21.1") || stonecutter.eval(mcVersion, "=1.20.1"))
-            requires("sinytra-connector")
+            requires("connector")
         requires("hoofprint")
         requires("surveyor")
         optional("mcqoy")

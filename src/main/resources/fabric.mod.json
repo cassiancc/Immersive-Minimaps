@@ -31,6 +31,7 @@
 		"hoofprint": ">=1.0.0"
 	},
 	"recommends": {
-		"immersiveoverlays": "*"
+		"immersiveoverlays": "*",
+		"mcqoy": "*"
 	}
 }
