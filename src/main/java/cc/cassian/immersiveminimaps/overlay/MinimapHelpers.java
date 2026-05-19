@@ -24,12 +24,29 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static cc.cassian.immersiveminimaps.ModClient.CONFIG;
+import static cc.cassian.immersiveminimaps.helpers.ColorUtil.color;
 
 public class MinimapHelpers {
+
+	private static final int GREEN = color(255, 0, 255, 76);
+	private static final int WHITE = color(255, 255, 255, 255);
+	public static HashMap<UUID, Integer> PLAYER_LOCATOR_BAR_COLOURS = new HashMap<>();
+
+
+	public static Integer getPlayerMapColour(UUID uuid, boolean friend) {
+		// singleplayer is always white
+		if (!friend) return WHITE;
+		// check if the locator bar chose a color for this player already, otherwise default to green
+		if (CONFIG.style.draw_players_with_locator_bar_colours)
+			return PLAYER_LOCATOR_BAR_COLOURS.getOrDefault(uuid, GREEN);
+		else return GREEN;
+	}
 
 	public static void checkInventoryForOverlays(Minecraft minecraft){
 		if ((CONFIG.minimap_enable)  && minecraft.level != null) {

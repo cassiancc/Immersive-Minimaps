@@ -40,28 +40,16 @@ public class ImmersiveOverlaysCompat {
 
     private static Component xText(String x, Style textStyle) {
         MutableComponent xLiteral = Component.literal(x).withStyle(textStyle);
-        return Component.translatable("gui.immersiveoverlays.coordinates.x", xLiteral).withStyle(Style.EMPTY.withColor(getColor(ModConfig.get().compass_x_colour)));
+        return Component.translatable("gui.immersiveoverlays.coordinates.x", xLiteral).withStyle(Style.EMPTY.withColor(ModConfig.get().compass_x_colour));
     }
-
-
-    // multiversion bs
-    private static int getColor(int colour) {
-        return colour;
-    }
-
-    //? 1.21.8 {
-    /*private static int getColor(String colour) {
-        return Objects.requireNonNullElse(ChatFormatting.getByName(colour), ChatFormatting.WHITE).getColor();
-    }
-    *///?}
 
     private static Component yText(String y, Style textStyle) {
         MutableComponent yLiteral = Component.literal(y).withStyle(textStyle);
-        return Component.translatable("gui.immersiveoverlays.coordinates.y", new Object[]{yLiteral}).withStyle(Style.EMPTY.withColor(getColor(ModConfig.get().compass_y_colour)));
+        return Component.translatable("gui.immersiveoverlays.coordinates.y", new Object[]{yLiteral}).withStyle(Style.EMPTY.withColor(ModConfig.get().compass_y_colour));
     }
 
     private static Component zText(String z, Style textStyle) {
         MutableComponent zLiteral = Component.literal(z).withStyle(textStyle);
-        return Component.translatable("gui.immersiveoverlays.coordinates.z", new Object[]{zLiteral}).withStyle(Style.EMPTY.withColor(getColor(ModConfig.get().compass_z_colour)));
+        return Component.translatable("gui.immersiveoverlays.coordinates.z", new Object[]{zLiteral}).withStyle(Style.EMPTY.withColor(ModConfig.get().compass_z_colour));
     }
 }

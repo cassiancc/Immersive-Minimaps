@@ -2,9 +2,6 @@
   "key.category.immersiveminimaps.keybinds": "Immersive Minimaps",
   "key.immersiveminimaps.cave_mode": "Cave Mode",
   "key.immersiveminimaps.zoom_in": "Zoom In",
-  "key.immersiveminimaps.zoom_out": "Zoom Out",
-  "gui.immersiveoverlays.coordinates.x": "X: %s",
-  "gui.immersiveoverlays.coordinates.y": "Y: %s",
-  "gui.immersiveoverlays.coordinates.z": "Z: %s"
+  "key.immersiveminimaps.zoom_out": "Zoom Out"
 
 }

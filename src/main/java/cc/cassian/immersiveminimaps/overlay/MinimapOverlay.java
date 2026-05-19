@@ -192,8 +192,7 @@ public class MinimapOverlay {
 			translate(guiGraphics, getXOffset(), getYOffset());
 			boolean clipped = clampedX != playerScreenX || clampedY != playerScreenY;
 			translate(guiGraphics, (float)clampedX, (float)clampedY);
-			int tint = 255;
-			int argb = color(255, (friend ? 0 : 255) * tint / 255, 255 * tint / 255, (friend ? 76 : 255) * tint / 255);
+			int argb = MinimapHelpers.getPlayerMapColour(uuid, friend);
 			if (!(Math.abs(playerScreenX - clampedX) > (double)this.width()) && !(Math.abs(playerScreenY - clampedY) > (double)this.height())) {
                 if (!clipped) {
                     float playerRotation = (float)Math.round(yaw / 360.0F * PLAYER_ROTATION_STEPS) / PLAYER_ROTATION_STEPS * 360.0F;

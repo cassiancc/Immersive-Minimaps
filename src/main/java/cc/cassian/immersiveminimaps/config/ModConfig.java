@@ -67,5 +67,7 @@ public class ModConfig extends WrappedConfig {
 		public boolean draw_players = true;
 		@Comment("Whether to render far-off players on the map.")
 		public boolean draw_offscreen_players = false;
+		@Comment("Whether to render all players with their locator bar colours, or to just default to green.")
+		public boolean draw_players_with_locator_bar_colours = true;
     }
 }

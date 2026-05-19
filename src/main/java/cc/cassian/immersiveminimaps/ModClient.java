@@ -36,7 +36,7 @@ public class ModClient implements ClientModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	//? if >1.21.8 {
+	//? if >26 {
 	public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(locate("keybinds")); // The category translation key used to categorize in the Controls screen
 	 //?} else {
 	/*public static final String CATEGORY = "key.category.immersiveminimaps.keybinds";

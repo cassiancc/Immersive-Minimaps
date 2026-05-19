@@ -1,17 +1,19 @@
 {
-	"required": true,
-	"package": "cc.cassian.immersiveminimaps.mixin",
-	"compatibilityLevel": "JAVA_17",
-	"plugin": "com.moulberry.mixinconstraints.ConstraintsMixinPlugin",
-	"injectors": {
-		"defaultRequire": 0
-	},
-	"overwrites": {
-		"requireAnnotations": true
-	},
-	"client": [
-		"HoofprintMixin",
-		"HoofprintScreenMixin",
-		"ImmersiveOverlayHelpersMixin"
-	]
+  "required": true,
+  "package": "cc.cassian.immersiveminimaps.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "plugin": "com.moulberry.mixinconstraints.ConstraintsMixinPlugin",
+  "injectors": {
+    "defaultRequire": 0
+  },
+  "overwrites": {
+    "requireAnnotations": true
+  },
+  "client": [
+    "HoofprintMixin",
+    "HoofprintScreenMixin",
+    "ImmersiveOverlayHelpersMixin",
+    "ImmersiveOverlaysHoofprintScreenMixin",
+    "LocatorBarRendererMixin"
+  ]
 }

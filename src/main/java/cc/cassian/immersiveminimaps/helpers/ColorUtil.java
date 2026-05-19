@@ -322,6 +322,10 @@ public class ColorUtil {
 	}
 	//?}
 
+	public static int color(final int alpha, final int red, final int green, final int blue) {
+		return (alpha & 0xFF) << 24 | (red & 0xFF) << 16 | (green & 0xFF) << 8 | blue & 0xFF;
+	}
+
 	public enum Brightness {
 		LOW(180),
 		NORMAL(220),
