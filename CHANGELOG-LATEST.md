@@ -1,3 +1,2 @@
-### Added
-- Right-clicking a block with an item in the minimap list now places a landmark. Clicking the block again now removes the landmark.
-- Right-clicking the air with an item in the minimap list now opens the Hoofprint world map. 
+### Fixed
+- Crash when right-clicking with a map on 1.21.1 and below.
