@@ -1,4 +1,4 @@
-package cc.cassian.immersiveminimaps.mixin;
+package cc.cassian.immersiveminimaps.mixin.minecraft;
 
 import cc.cassian.immersiveminimaps.overlay.MinimapHelpers;
 import com.moulberry.mixinconstraints.annotations.IfMinecraftVersion;

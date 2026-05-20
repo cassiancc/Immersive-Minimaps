@@ -9,7 +9,13 @@ This mod pairs well with my [Immersive Overlays](https://modrinth.com/project/im
 
 ## Features
 
-A minimap overlay displaying the player's surroundings is visible whenever the player has a map in their inventory, including in a bundle.
+A minimap overlay displaying the player's surroundings is visible whenever the player has a map in their inventory, including in a bundle. This minimap shows nearby Surveyor landmarks and any nearby players that are sharing their map with you.
+
+Items in the minimap list can also be used on a block to place a waypoint. Clicking the block again removes the landmark.
+
+Items in the minimap list can also be used to open the Hoofprint world map.
+
+This mod will also adjust the requirements to open Hoofprint's world map to match Immersive Minimaps.
 
 ## Installation
 
@@ -25,7 +31,7 @@ Immersive Minimaps is a clientside mod. Its dependencies are listed below.
 ## FAQ
 
 - Will this mod be ported to other versions/loaders?
-  - Immersive Minimaps is available for all versions that Surveyor 1.0.0 has been released for - 1.20.1, 1.21.1, 1.21.8, and 26.1. Neither this mod nor Hoofprint are natively available on NeoForge, but both can be used through [Sinytra Connector](https://modrinth.com/mod/sinytra-connector).
+  - Immersive Minimaps is actively maintained on the last three major versions - 1.20.1, 1.21.1, and 26.1. Neither this mod nor Hoofprint are natively available on NeoForge, but both can be used through [Sinytra Connector](https://modrinth.com/mod/sinytra-connector).
 - Mod compatibility?
   - For sheer ease of maintenance, the base mod will only support [Trinkets](https://modrinth.com/mod/trinkets) [(Updated)](https://modrinth.com/mod/trinkets-updated). For modded backpacks or other accessory mods, add on [Immersive Overlays](https://modrinth.com/mod/immersive-overlays) and this mod will use Immersive Overlays's large amount of mod compatibility code.
 

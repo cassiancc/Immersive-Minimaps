@@ -1,4 +1,4 @@
-package cc.cassian.immersiveminimaps.mixin;
+package cc.cassian.immersiveminimaps.mixin.immersiveoverlays;
 
 import cc.cassian.immersiveminimaps.overlay.MinimapHelpers;
 import cc.cassian.immersiveminimaps.overlay.MinimapOverlay;

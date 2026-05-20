@@ -5,8 +5,8 @@ import cc.cassian.immersiveminimaps.helpers.ModLists;
 import cc.cassian.immersiveminimaps.overlay.MinimapOverlay;
 import cc.cassian.immersiveminimaps.overlay.MinimapHelpers;
 import com.mojang.blaze3d.platform.InputConstants;
+import folk.sisby.surveyor.client.SurveyorClient;
 import net.fabricmc.api.ClientModInitializer;
-
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 //? if >26 {
@@ -19,6 +19,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 //?} else {
 /*import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 *///?}
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -95,6 +96,9 @@ public class ModClient implements ClientModInitializer {
         registerKeyMapping(ModClient.zoomIn);
         registerKeyMapping(ModClient.zoomOut);
 		registerKeyMapping(ModClient.caveMode);
+		UseBlockCallback.EVENT.register((player, level, hand, blockHitResult) -> {
+			return ModEvents.placeWaypoint(player.getItemInHand(hand).getItem(), level, player, SurveyorClient.getClientUuid(), blockHitResult.getBlockPos());
+		});
 	}
 
 	private static void registerKeyMapping(KeyMapping keyMapping) {

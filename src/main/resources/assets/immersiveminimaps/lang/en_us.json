@@ -2,6 +2,9 @@
   "key.category.immersiveminimaps.keybinds": "Immersive Minimaps",
   "key.immersiveminimaps.cave_mode": "Cave Mode",
   "key.immersiveminimaps.zoom_in": "Zoom In",
-  "key.immersiveminimaps.zoom_out": "Zoom Out"
+  "key.immersiveminimaps.zoom_out": "Zoom Out",
+  "landmark.immersiveminimaps.disabled": "The landmark system is dynamically disabled!",
+  "landmark.immersiveminimaps.added": "Added new Waypoint at %s!",
+  "landmark.immersiveminimaps.removed": "Waypoint at %s removed successfully!"
 
 }

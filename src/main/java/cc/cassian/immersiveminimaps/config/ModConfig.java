@@ -23,10 +23,14 @@ public class ModConfig extends WrappedConfig {
 	@DisplayName("Immersive Overlays Bridge")
 	@Comment("When present, Immersive Overlays can be used to gain a large amount of mod compatibility with third-party backpacks and accessory mods, and its requirements will be used rather than the configs set in Immersive Minimaps.")
 	public boolean immersive_overlays_bridge = true;
+	@Comment("When you right-click on a block with an item in the list of map items, place a landmark.")
+	public boolean items_place_landmarks = true;
+	@Comment("When you right-click in the air with an item in the list of map items, open the world map.")
+	public boolean items_open_world_map = true;
 
 	@Comment({"Options to change the visuals of the map to be more or less vanilla-style."})
 	public Requirements requirements = new Requirements();
-    public static class Requirements implements WrappedConfig.Section {
+	public static class Requirements implements WrappedConfig.Section {
 
 		@DisplayName("Require item")
 		@Comment("Require an item to activate the minimap. This is the intended way to use the mod.")

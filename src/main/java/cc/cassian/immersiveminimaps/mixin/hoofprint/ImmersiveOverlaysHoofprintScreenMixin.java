@@ -1,4 +1,4 @@
-package cc.cassian.immersiveminimaps.mixin;
+package cc.cassian.immersiveminimaps.mixin.hoofprint;
 
 import cc.cassian.immersiveminimaps.compat.ImmersiveOverlaysCompat;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;

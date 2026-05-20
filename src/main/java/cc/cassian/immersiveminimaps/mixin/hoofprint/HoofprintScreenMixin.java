@@ -1,4 +1,4 @@
-package cc.cassian.immersiveminimaps.mixin;
+package cc.cassian.immersiveminimaps.mixin.hoofprint;
 
 import cc.cassian.immersiveminimaps.ModClient;
 import cc.cassian.immersiveminimaps.overlay.MinimapHelpers;
@@ -10,7 +10,6 @@ import garden.hestia.hoofprint.HoofprintScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-import java.awt.*;
 import java.util.UUID;
 
 @IfModLoaded("hoofprint")

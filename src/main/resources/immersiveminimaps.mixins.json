@@ -10,10 +10,11 @@
     "requireAnnotations": true
   },
   "client": [
-    "HoofprintMixin",
-    "HoofprintScreenMixin",
-    "ImmersiveOverlayHelpersMixin",
-    "ImmersiveOverlaysHoofprintScreenMixin",
-    "LocatorBarRendererMixin"
+    "hoofprint.HoofprintMixin",
+    "hoofprint.HoofprintScreenMixin",
+    "hoofprint.ImmersiveOverlaysHoofprintScreenMixin",
+    "immersiveoverlays.ImmersiveOverlayHelpersMixin",
+    "minecraft.ItemMixin",
+    "minecraft.LocatorBarRendererMixin"
   ]
 }

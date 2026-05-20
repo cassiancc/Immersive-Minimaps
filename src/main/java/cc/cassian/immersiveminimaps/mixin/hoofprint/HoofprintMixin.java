@@ -1,4 +1,4 @@
-package cc.cassian.immersiveminimaps.mixin;
+package cc.cassian.immersiveminimaps.mixin.hoofprint;
 
 import cc.cassian.immersiveminimaps.ModClient;
 import cc.cassian.immersiveminimaps.overlay.MinimapOverlay;
