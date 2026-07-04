@@ -14,7 +14,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Hoofprint.class)
 public class HoofprintMixin {
 
-    @Inject(method = "lambda$onInitializeClient$0", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;setScreen(Lnet/minecraft/client/gui/screens/Screen;)V"), cancellable = true)
+    //` if >26.1 'Minecraft;setScreen'->'gui/Gui;setScreen' {
+    @Inject(method = "lambda$onInitializeClient$0", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/Gui;setScreen(Lnet/minecraft/client/gui/screens/Screen;)V"), cancellable = true)
+    //`}
     private static void minimapImportantItem(Minecraft c, CallbackInfo ci) {
         if (ModClient.CONFIG.apply_requirements_to_hoofprint && !MinimapOverlay.showMinimap) {
             ci.cancel();

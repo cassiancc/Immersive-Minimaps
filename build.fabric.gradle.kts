@@ -9,6 +9,7 @@ plugins {
 
 val minecraft = stonecutter.current.version
 val mcVersion = stonecutter.current.project.substringBeforeLast('-')
+val supportsConnector = stonecutter.eval(mcVersion, "=1.21.1") || stonecutter.eval(mcVersion, "=1.20.1")
 
 tasks.named<ProcessResources>("processResources") {
     fun prop(name: String) = project.property(name) as String
@@ -184,14 +185,8 @@ dependencies {
     modImplementation("dev.isxander:yet-another-config-lib:${property("deps.yacl")}")
     modImplementation("maven.modrinth:mcqoy:${property("deps.mcqoy")}")
     // Trinkets
-    if (stonecutter.eval(mcVersion, "<1.21.4")) {
-        modCompileOnly("dev.emi:trinkets:${property("deps.trinkets")}") {
-            exclude(group = "net.fabricmc")
-        }
-    } else {
-        modCompileOnly("eu.pb4.fork:trinkets:${property("deps.trinkets")}") {
-            exclude(group = "net.fabricmc")
-        }
+    modCompileOnly("dev.emi:trinkets:${property("deps.trinkets")}") {
+        exclude(group = "net.fabricmc")
     }
     modImplementation("maven.modrinth:immersive-overlays:${property("deps.immersive_overlays")}")
     implementation("org.jspecify:jspecify:1.0.0")
@@ -269,18 +264,18 @@ publishMods {
     version = "${property("mod.version")}+${property("deps.minecraft")}-fabric"
     changelog = provider { rootProject.file("CHANGELOG-LATEST.md").readText() }
     modLoaders.add("fabric")
-    if (stonecutter.eval(mcVersion, "=1.21.1"))
+    if (supportsConnector && stonecutter.eval(mcVersion, "=1.21.1"))
         modLoaders.add("neoforge")
-    if (stonecutter.eval(mcVersion, "=1.20.1"))
+    if (supportsConnector && stonecutter.eval(mcVersion, "=1.20.1"))
         modLoaders.add("forge")
 
     modrinth {
         projectId = property("publish.modrinth") as String
         accessToken = env.MODRINTH_API_KEY.orNull()
-        minecraftVersions.add(stonecutter.current.version)
+        minecraftVersions.add(property("deps.minecraft") as String)
         minecraftVersions.addAll(additionalVersions)
         requires("fabric-api")
-        if (stonecutter.eval(mcVersion, "=1.21.1") || stonecutter.eval(mcVersion, "=1.20.1"))
+        if (supportsConnector)
             requires("connector")
         requires("hoofprint")
         requires("surveyor")
@@ -291,10 +286,10 @@ publishMods {
     curseforge {
         projectId = property("publish.curseforge") as String
         accessToken = env.CURSEFORGE_API_KEY.orNull()
-        minecraftVersions.add(stonecutter.current.version)
+        minecraftVersions.add(property("deps.minecraft") as String)
         minecraftVersions.addAll(additionalVersions)
         requires("fabric-api")
-        if (stonecutter.eval(mcVersion, "=1.21.1") || stonecutter.eval(mcVersion, "=1.20.1"))
+        if (supportsConnector)
             requires("sinytra-connector")
         requires("hoofprint")
         requires("surveyor-map-framework")

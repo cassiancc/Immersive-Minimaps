@@ -64,11 +64,9 @@ public class ModClient implements ClientModInitializer {
 	);
 
 	public static Identifier locate(String namespace, String path) {
-		//? if >1.21 {
+		//~ if >1.21 'new Identifier' -> 'Identifier.fromNamespaceAndPath' {
 		return Identifier.fromNamespaceAndPath(namespace, path);
-		//?} else {
-		/*return new Identifier(namespace, path);
-		 *///?}
+		//~}
 	}
 
 	public static Identifier locate(String path) {
@@ -76,11 +74,9 @@ public class ModClient implements ClientModInitializer {
 	}
 
 	public static Identifier withVanillaNamespace(String s) {
-		//? if >1.21 {
+		//~ if >1.21 'new Identifier' -> 'Identifier.withDefaultNamespace' {
 		return Identifier.withDefaultNamespace(s);
-		 //?} else {
-		/*return new Identifier(s);
-		*///?}
+		//~}
 	}
 
 	@Override
@@ -102,11 +98,9 @@ public class ModClient implements ClientModInitializer {
 	}
 
 	private static void registerKeyMapping(KeyMapping keyMapping) {
-		//? if <26 {
-		/*KeyBindingHelper.registerKeyBinding(keyMapping);
-		*///?} else {
+		//~ if >26 'KeyBindingHelper.registerKeyBinding'->'KeyMappingHelper.registerKeyMapping' {
 		KeyMappingHelper.registerKeyMapping(keyMapping);
-		//?}
+		//~}
 	}
 
 	private static void tick(Minecraft minecraft) {

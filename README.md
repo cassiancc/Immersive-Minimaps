@@ -24,7 +24,7 @@ Immersive Minimaps is a clientside mod. Its dependencies are listed below.
 ### Dependencies
 - [Hoofprint](https://modrinth.com/mod/hoofprint) is required.
 - On Fabric, [Fabric API](https://modrinth.com/mod/fabric-api) is required.
-- On NeoForge, [Sinytra Connector](https://modrinth.com/mod/connector) is required.
+- On NeoForge, [Sinytra Connector](https://modrinth.com/mod/connector) or [Launchpad](https://modrinth.com/mod/launchpad) is required.
 - [McQoy](https://modrinth.com/mod/mcqoy) is recommended to configure the mod.
 - [Immersive Overlays](https://modrinth.com/mod/immersive-overlays) is recommended for additional mod compatibility.
 

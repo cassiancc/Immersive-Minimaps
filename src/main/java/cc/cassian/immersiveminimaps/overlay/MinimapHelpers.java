@@ -79,7 +79,11 @@ public class MinimapHelpers {
 	}
 
 	public static boolean shouldCancelRender(Minecraft mc) {
+		//? if >26.1 {
+		/*if (mc.gui.hud.isHidden()) return true;
+		*///?} else {
 		if (mc.options.hideGui) return true;
+		//?}
 		if (!CONFIG.minimap_enable) return true;
 		if (CONFIG.hide_from_debug) {
 			return

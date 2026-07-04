@@ -16,7 +16,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @IfMinecraftVersion(minVersion = "26.1")
-//? if >26 {
+//? if >26.1 {
+/*@Mixin(net.minecraft.client.gui.contextualbar.LocatorBar.class)
+*///?} else if >26 {
 @Mixin(net.minecraft.client.gui.contextualbar.LocatorBarRenderer.class)
 //?} else {
 /*@Mixin(Entity.class)

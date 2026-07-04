@@ -14,7 +14,7 @@
 	},
 	"license": "LGPL-3.0-or-later",
 	"icon": "assets/immersiveminimaps/icon.png",
-	"environment": "client",
+	"environment": "*",
 	"entrypoints": {
 		"client": [
 			"cc.cassian.immersiveminimaps.ModClient"
@@ -33,5 +33,21 @@
 	"recommends": {
 		"immersiveoverlays": "*",
 		"mcqoy": "*"
+	},
+	"custom": {
+		"launchpad:compatible": true,
+		"launchpad:overrides": {
+			"depends": {
+				"minecraft": "${minecraft}",
+				"fabric_api_base": "*",
+				"fabric_command_api_v2": "*",
+				"fabric_networking_api_v1": "*",
+				"fabric_lifecycle_events_v1": "*",
+				"fabric_key_mapping_api_v1": "*",
+				"surveyor": "*",
+				"hoofprint": "*"
+			}
+		}
 	}
+
 }
