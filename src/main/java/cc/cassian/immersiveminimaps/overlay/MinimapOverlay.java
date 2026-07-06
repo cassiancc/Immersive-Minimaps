@@ -3,6 +3,7 @@ package cc.cassian.immersiveminimaps.overlay;
 
 import cc.cassian.immersiveminimaps.ModClient;
 import cc.cassian.immersiveminimaps.helpers.ColorUtil;
+import cc.cassian.mru.client.util.HudUtils;
 import folk.sisby.surveyor.client.SurveyorClient;
 import folk.sisby.surveyor.landmark.Landmark;
 import folk.sisby.surveyor.landmark.component.LandmarkComponentTypes;
@@ -88,7 +89,7 @@ public class MinimapOverlay {
 			if (drawHeight > 0 && drawWidth > 0) {
 				guiGraphics.pose().pushMatrix();
 				translate(guiGraphics, (float)this.worldXToRenderX(regionX1 + u), (float)this.worldZToRenderY(regionZ1 + v));
-				MinimapHelpers.blit(
+				HudUtils.blit(
 						guiGraphics,
 						texture, 0, 0, u, v, drawWidth, drawHeight, 512, 512);
 				guiGraphics.pose().popMatrix();
@@ -150,7 +151,7 @@ public class MinimapOverlay {
 
 	private void drawBackground(GuiGraphicsExtractor guiGraphics, Identifier frame) {
 		if (ModClient.CONFIG.style.draw_background) {
-			MinimapHelpers.blitSprite(
+			HudUtils.blitSprite(
 					guiGraphics,
 					frame, getXOffset() - 2, getYOffset() - 2, width() + 5, height() + 5);
 		}
@@ -202,18 +203,18 @@ public class MinimapOverlay {
                     /*guiGraphics.pose().mulPose(com.mojang.math.Axis.ZP.rotationDegrees(180.0F + playerRotation));
                     *///?}
                     translate(guiGraphics, -2.5F, -3.5F);
-                    MinimapHelpers.blit(
+					HudUtils.blit(
                             guiGraphics,
                             ModClient.withVanillaNamespace("textures/map/decorations/player.png"), 0, 0, 2.0F, 0.0F, 5, 7, 5, 7, 8, 8, argb);
                 } else if (ModClient.CONFIG.style.draw_offscreen_players) {
                     translate(guiGraphics,-3.0F, -3.0F);
-                    MinimapHelpers.blit(
+					HudUtils.blit(
                             guiGraphics,
                             ModClient.withVanillaNamespace("textures/map/decorations/player_off_map.png"), 0, 0, 1.0F, 1.0F, 6, 6, 6, 6, 8, 8, argb);
                 }
             } else if (ModClient.CONFIG.style.draw_offscreen_players) {
 				translate(guiGraphics, -2.0F, -2.0F);
-				MinimapHelpers.blit(
+				HudUtils.blit(
 						guiGraphics,
 						ModClient.withVanillaNamespace("textures/map/decorations/player_off_limits.png"), 0, 0, 2.0F, 2.0F, 4, 4, 4, 4, 8, 8, argb);
 			}
@@ -292,7 +293,7 @@ public class MinimapOverlay {
 						if (landmarkScreenY < height()-4)
 							guiGraphics.fakeItem(Objects.requireNonNullElse(stack, ItemStack.EMPTY), -8, -8);
 					} else {
-						MinimapHelpers.blit(
+						HudUtils.blit(
 								guiGraphics,
 								ModClient.withVanillaNamespace("textures/map/decorations/white_banner.png"), -4, -8, 0.0F, 0.0F, 8, 8, 8, 8, 8, 8, -16777216 | ColorUtil.tint(landmarkColor, tint));
 					}

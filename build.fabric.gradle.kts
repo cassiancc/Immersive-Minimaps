@@ -162,6 +162,7 @@ repositories {
             includeGroupAndSubgroups("xyz.nucleoid")
         }
     }
+    mavenLocal()
     mavenCentral()
 
 }
@@ -175,6 +176,9 @@ dependencies {
     })
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
+
+    modImplementation("cc.cassian.mru:mru-fabric:${property("deps.mru")}+${property("deps.minecraft")}")
+    include("cc.cassian.mru:mru-fabric:${property("deps.mru")}+${property("deps.minecraft")}")
 
     modImplementation("com.terraformersmc:modmenu:${property("deps.modmenu")}")
     modImplementation("maven.modrinth:surveyor:${property("deps.surveyor")}")

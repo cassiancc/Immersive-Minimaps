@@ -2,6 +2,7 @@ package cc.cassian.immersiveminimaps.mixin.minecraft;
 
 import cc.cassian.immersiveminimaps.ModClient;
 import cc.cassian.immersiveminimaps.helpers.ModLists;
+import cc.cassian.mru.client.util.HudUtils;
 import com.moulberry.mixinconstraints.annotations.IfModLoaded;
 import garden.hestia.hoofprint.HoofprintScreen;
 import net.minecraft.client.Minecraft;
@@ -30,9 +31,7 @@ public class ItemMixin {
             > cir) {
         Item item = (Item) (Object) this;
         if (ModClient.CONFIG.items_open_world_map && level.isClientSide() && ModLists.items.contains(item)) {
-            //~ if >26.1 'setScreen' -> 'gui.setScreen' {
-            Minecraft.getInstance().setScreen(new HoofprintScreen());
-            //~}
+            HudUtils.setScreen(new HoofprintScreen());
             cir.setReturnValue(
                     //? if >26 {
                     InteractionResult.SUCCESS

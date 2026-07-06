@@ -4,21 +4,13 @@ import cc.cassian.immersiveminimaps.config.ModConfig;
 import cc.cassian.immersiveminimaps.helpers.ModLists;
 import cc.cassian.immersiveminimaps.overlay.MinimapOverlay;
 import cc.cassian.immersiveminimaps.overlay.MinimapHelpers;
+import cc.cassian.mru.client.util.ClientVersionedUtil;
+import cc.cassian.mru.util.CommonUtils;
 import com.mojang.blaze3d.platform.InputConstants;
 import folk.sisby.surveyor.client.SurveyorClient;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-//? if >26 {
-import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
-//?} else {
-/*import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-*///?}
-//? if >1.21.2 {
-import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
-//?} else {
-/*import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-*///?}
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
@@ -63,14 +55,8 @@ public class ModClient implements ClientModInitializer {
 			CATEGORY
 	);
 
-	public static Identifier locate(String namespace, String path) {
-		//~ if >1.21 'new Identifier' -> 'Identifier.fromNamespaceAndPath' {
-		return Identifier.fromNamespaceAndPath(namespace, path);
-		//~}
-	}
-
 	public static Identifier locate(String path) {
-		return locate(MOD_ID, path);
+		return CommonUtils.id(MOD_ID, path);
 	}
 
 	public static Identifier withVanillaNamespace(String s) {
@@ -84,23 +70,13 @@ public class ModClient implements ClientModInitializer {
 		ClientTickEvents.END_CLIENT_TICK.register(ModClient::tick);
 		ClientLifecycleEvents.CLIENT_STARTED.register((client -> ModLists.loadLists()));
 		CONFIG.registerCallback(config -> ModLists.loadLists());
-		//? if >1.21.2 {
-		HudElementRegistry.addFirst(ModClient.locate("minimap"), MinimapOverlay.INSTANCE::extractRenderState);
-		//?} else {
-		/*HudRenderCallback.EVENT.register(MinimapOverlay.INSTANCE::extractRenderState);
-		*///?}
-        registerKeyMapping(ModClient.zoomIn);
-        registerKeyMapping(ModClient.zoomOut);
-		registerKeyMapping(ModClient.caveMode);
+		ClientVersionedUtil.registerOverlay(ModClient.locate("minimap"), MinimapOverlay.INSTANCE::extractRenderState);
+        ClientVersionedUtil.registerKeyMapping(ModClient.zoomIn);
+		ClientVersionedUtil.registerKeyMapping(ModClient.zoomOut);
+		ClientVersionedUtil.registerKeyMapping(ModClient.caveMode);
 		UseBlockCallback.EVENT.register((player, level, hand, blockHitResult) -> {
 			return ModEvents.placeWaypoint(player.getItemInHand(hand).getItem(), level, player, SurveyorClient.getClientUuid(), blockHitResult.getBlockPos());
 		});
-	}
-
-	private static void registerKeyMapping(KeyMapping keyMapping) {
-		//~ if >26 'KeyBindingHelper.registerKeyBinding'->'KeyMappingHelper.registerKeyMapping' {
-		KeyMappingHelper.registerKeyMapping(keyMapping);
-		//~}
 	}
 
 	private static void tick(Minecraft minecraft) {

@@ -150,6 +150,9 @@ dependencies {
     implementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
     implementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
 
+    implementation("cc.cassian.mru:mru-fabric:${property("deps.mru")}+${property("deps.minecraft")}")
+    include("cc.cassian.mru:mru-fabric:${property("deps.mru")}+${property("deps.minecraft")}")
+
     implementation("com.terraformersmc:modmenu:${property("deps.modmenu")}")
     implementation("folk.sisby:surveyor:${property("deps.surveyor")}")
 
@@ -159,16 +162,6 @@ dependencies {
         include("garden.hestia:hoofprint:${property("deps.hoofprint")}")
     } else {
         implementation("maven.modrinth:hoofprint:${property("deps.hoofprint")}")
-    }
-    if (supportsConnector) {
-        include("org.sinytra.forgified-fabric-api:fabric-api-base:2.0.3+b11575294c")
-        include("org.sinytra:forgified-fabric-loader:2.5.75+0.18.4+26.1")
-        include("org.sinytra.forgified-fabric-api:fabric-key-mapping-api-v1:2.0.4+05fccb0f4c")
-        include("org.sinytra.forgified-fabric-api:fabric-networking-api-v1:6.3.1+64200f3a4c")
-        include("org.sinytra.forgified-fabric-api:fabric-lifecycle-events-v1:4.1.1+150d8dbd4c")
-        include("org.sinytra.forgified-fabric-api:fabric-command-api-v2:3.0.5+29e133704c")
-        include("org.sinytra.forgified-fabric-api:fabric-rendering-v1:23.3.0+9e54f1904c")
-        include("org.sinytra.forgified-fabric-api:fabric-events-interaction-v0:5.2.2+9abcb0834c")
     }
 
     implementation("folk.sisby:kaleido-config:${property("deps.kaleido")}")
@@ -258,8 +251,10 @@ publishMods {
         minecraftVersions.add(property("deps.minecraft") as String)
         minecraftVersions.addAll(additionalVersions)
         requires("fabric-api")
-        if (supportsConnector)
+        if (supportsConnector) {
             requires("launchpad")
+            requires("forgified-fabric-api")
+        }
         optional("mcqoy")
         optional("immersive-overlays")
         if (edgeRelease) {
@@ -279,8 +274,10 @@ publishMods {
         minecraftVersions.add(property("deps.minecraft") as String)
         minecraftVersions.addAll(additionalVersions)
         requires("fabric-api")
-        if (supportsConnector)
+        if (supportsConnector) {
             requires("launchpad")
+            requires("forgified-fabric-api")
+        }
         if (edgeRelease) {
             embeds("hoofprint")
             embeds("surveyor-map-framework")
