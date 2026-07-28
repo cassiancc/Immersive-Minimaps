@@ -28,7 +28,8 @@
 		"minecraft": "${minecraft}",
 		"fabric-api": "*",
 		"surveyor": ">=1.0.0",
-		"hoofprint": ">=1.0.0"
+		"hoofprint": ">=1.0.0",
+		"mru": ">=1.0.31"
 	},
 	"recommends": {
 		"immersiveoverlays": "*",

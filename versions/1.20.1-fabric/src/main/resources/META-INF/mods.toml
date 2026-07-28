@@ -36,5 +36,12 @@ versionRange="*"
 ordering="NONE"
 side="BOTH"
 
+[[dependencies.immersiveminimaps]]
+modId="mru"
+mandatory=true
+versionRange="*"
+ordering="NONE"
+side="BOTH"
+
 [properties]
 "connector:placeholder"=true

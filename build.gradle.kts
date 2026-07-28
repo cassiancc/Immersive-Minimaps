@@ -1,15 +1,20 @@
 @file:Suppress("UnstableApiUsage")
 
 plugins {
-    id("net.fabricmc.fabric-loom-remap")
+    id("dev.kikugie.loom-back-compat")
     id("dev.kikugie.postprocess.jsonlang")
     id("me.modmuss50.mod-publish-plugin")
     id("maven-publish")
 }
 
+val loader = sc.current.project.substringAfter('-')
+val fabric = loader == "fabric"
 val minecraft = stonecutter.current.version
 val mcVersion = stonecutter.current.project.substringBeforeLast('-')
-val supportsConnector = stonecutter.eval(mcVersion, "=1.21.1") || stonecutter.eval(mcVersion, "=1.20.1")
+val supportsConnector = stonecutter.eval(mcVersion, "=1.21.1") || stonecutter.eval(mcVersion, "=1.20.1") || stonecutter.eval(mcVersion, "=26.1")
+val supportsLaunchpad = stonecutter.eval(mcVersion, "=26.1")
+val edgeRelease = stonecutter.eval(mcVersion, ">26.1.2") || !fabric
+val unobfuscated = stonecutter.eval(mcVersion, ">26")
 
 tasks.named<ProcessResources>("processResources") {
     fun prop(name: String) = project.property(name) as String
@@ -31,7 +36,7 @@ tasks.named("processResources") {
     dependsOn(":${stonecutter.current.project}:stonecutterGenerate")
 }
 
-version = "${property("mod.version")}+${property("deps.minecraft")}-fabric"
+version = "${property("mod.version")}+${property("deps.minecraft")}-${loader}"
 base.archivesName = property("mod.id") as String
 
 //loom {
@@ -162,6 +167,13 @@ repositories {
             includeGroupAndSubgroups("xyz.nucleoid")
         }
     }
+    maven {
+        name = "Sinytra"
+        url = uri("https://maven.sinytra.org")
+        content {
+            includeGroupAndSubgroups("org.sinytra")
+        }
+    }
     mavenLocal()
     mavenCentral()
 
@@ -169,29 +181,63 @@ repositories {
 
 dependencies {
     minecraft("com.mojang:minecraft:${property("deps.minecraft")}")
-    mappings(loom.layered {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${property("deps.parchment")}@zip")
-        mappings("dev.lambdaurora:yalmm-mojbackward:${property("deps.minecraft")}+build.${property("deps.mojbackward")}")
-    })
-    modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
+    if (!unobfuscated) {
+        mappings(loom.layered {
+            officialMojangMappings()
+            parchment("org.parchmentmc.data:parchment-${property("deps.parchment")}@zip")
+            mappings("dev.lambdaurora:yalmm-mojbackward:${property("deps.minecraft")}+build.${property("deps.mojbackward")}")
+        })
+    }
+    if (fabric) {
+        modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+        modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
+        modImplementation("maven.modrinth:mcqoy:${property("deps.mcqoy")}")
+    } else {
+        forgeUserdev("net.neoforged:neoforge:${property("deps.neoforge")}:userdev")
+        implementation("org.sinytra.launchpad:launchpad:${property("deps.launchpad")}")
+        implementation("org.sinytra:forgified-fabric-loader:${property("deps.fabric_loader")}")
+        include("org.sinytra:forgified-fabric-loader:${property("deps.fabric_loader")}")
 
-    modImplementation("cc.cassian.mru:mru-fabric:${property("deps.mru")}+${property("deps.minecraft")}")
-    include("cc.cassian.mru:mru-fabric:${property("deps.mru")}+${property("deps.minecraft")}")
+        implementation("org.sinytra.forgified-fabric-api:forgified-fabric-api:${property("deps.fabric_api")}")
 
-    modImplementation("com.terraformersmc:modmenu:${property("deps.modmenu")}")
-    modImplementation("maven.modrinth:surveyor:${property("deps.surveyor")}")
-    modImplementation("maven.modrinth:hoofprint:${property("deps.hoofprint")}")
+        include("org.sinytra.forgified-fabric-api:fabric-api-base:${property("deps.fabric_base")}")
+        include("org.sinytra.forgified-fabric-api:fabric-key-mapping-api-v1:${property("deps.fabric_key_mapping")}")
+        include("org.sinytra.forgified-fabric-api:fabric-networking-api-v1:${property("deps.fabric_networking")}")
+        include("org.sinytra.forgified-fabric-api:fabric-lifecycle-events-v1:${property("deps.fabric_lifecycle_events")}")
+        include("org.sinytra.forgified-fabric-api:fabric-command-api-v2:${property("deps.fabric_commands")}")
+        include("org.sinytra.forgified-fabric-api:fabric-rendering-v1:${property("deps.fabric_rendering")}")
+        include("org.sinytra.forgified-fabric-api:fabric-events-interaction-v0:${property("deps.fabric_events_interaction")}")
+    }
+
+    modImplementation("com.terraformersmc:modmenu:${property("deps.modmenu")}") {
+        exclude("net.fabricmc")
+    }
+    modImplementation("folk.sisby:surveyor:${property("deps.surveyor")}"){
+        exclude("net.fabricmc")
+    }
+    modImplementation("cc.cassian.mru:mru-${loader}:${property("deps.mru")}+${property("deps.minecraft")}"){
+        exclude("net.fabricmc")
+    }
+
+    if (unobfuscated) {
+        implementation("garden.hestia:hoofprint:${property("deps.hoofprint")}"){
+            exclude("net.fabricmc")
+        }
+        include("folk.sisby:surveyor:${property("deps.surveyor")}")
+        include("garden.hestia:hoofprint:${property("deps.hoofprint")}")
+        implementation("eu.pb4:trinkets:${property("deps.trinkets")}"){
+            exclude(group = "net.fabricmc")
+        }
+    } else {
+        modImplementation("maven.modrinth:hoofprint:${property("deps.hoofprint")}")
+        modCompileOnly("dev.emi:trinkets:${property("deps.trinkets")}") {
+            exclude(group = "net.fabricmc")
+        }
+    }
     implementation("folk.sisby:kaleido-config:${property("deps.kaleido")}")
     include("folk.sisby:kaleido-config:${property("deps.kaleido")}")
     // McQoy
     modImplementation("dev.isxander:yet-another-config-lib:${property("deps.yacl")}")
-    modImplementation("maven.modrinth:mcqoy:${property("deps.mcqoy")}")
-    // Trinkets
-    modCompileOnly("dev.emi:trinkets:${property("deps.trinkets")}") {
-        exclude(group = "net.fabricmc")
-    }
     modImplementation("maven.modrinth:immersive-overlays:${property("deps.immersive_overlays")}")
     implementation("org.jspecify:jspecify:1.0.0")
 
@@ -234,7 +280,7 @@ tasks {
 
     register<Copy>("buildAndCollect") {
         group = "build"
-        from(remapJar.map { it.archiveFile })
+        from(loomx.modJar.map { it.archiveFile })
         into(rootProject.layout.buildDirectory.file("libs/${project.property("mod.version")}"))
         dependsOn("build")
     }
@@ -242,7 +288,9 @@ tasks {
 
 java {
     withSourcesJar()
-    val javaCompat = if (stonecutter.eval(stonecutter.current.version, ">=1.21")) {
+    val javaCompat = if (stonecutter.eval(stonecutter.current.version, ">=26")) {
+        JavaVersion.VERSION_25
+    } else if (stonecutter.eval(stonecutter.current.version, ">=1.21")) {
         JavaVersion.VERSION_21
     } else {
         JavaVersion.VERSION_17
@@ -259,15 +307,15 @@ val additionalVersions: List<String> = additionalVersionsStr
     ?: emptyList()
 
 publishMods {
-    file = tasks.remapJar.map { it.archiveFile.get() }
-    additionalFiles.from(tasks.remapSourcesJar.map { it.archiveFile.get() })
+    file = loomx.modJar.map { it.archiveFile.get() }
+    additionalFiles.from(loomx.modSourcesJar.map { it.archiveFile.get() })
 
     // one of BETA, ALPHA, STABLE
     type = STABLE
     displayName = "${property("mod.name")} ${property("mod.version")} for ${stonecutter.current.version}"
-    version = "${property("mod.version")}+${property("deps.minecraft")}-fabric"
+    version = "${property("mod.version")}+${property("deps.minecraft")}-${loader}"
     changelog = provider { rootProject.file("CHANGELOG-LATEST.md").readText() }
-    modLoaders.add("fabric")
+    modLoaders.add(loader)
     if (supportsConnector && stonecutter.eval(mcVersion, "=1.21.1"))
         modLoaders.add("neoforge")
     if (supportsConnector && stonecutter.eval(mcVersion, "=1.20.1"))
@@ -278,11 +326,22 @@ publishMods {
         accessToken = env.MODRINTH_API_KEY.orNull()
         minecraftVersions.add(property("deps.minecraft") as String)
         minecraftVersions.addAll(additionalVersions)
-        requires("fabric-api")
+        if (fabric)
+            requires("fabric-api")
         if (supportsConnector)
             requires("connector")
-        requires("hoofprint")
-        requires("surveyor")
+        if (supportsLaunchpad)
+            requires("launchpad")
+        if (edgeRelease) {
+            embeds("hoofprint")
+            embeds("surveyor")
+            environment = CLIENT_AND_SERVER
+        } else {
+            requires("hoofprint")
+            requires("surveyor")
+            environment = CLIENT_ONLY
+        }
+        requires("mru")
         optional("mcqoy")
         optional("immersive-overlays")
     }
@@ -292,11 +351,24 @@ publishMods {
         accessToken = env.CURSEFORGE_API_KEY.orNull()
         minecraftVersions.add(property("deps.minecraft") as String)
         minecraftVersions.addAll(additionalVersions)
-        requires("fabric-api")
+        if (fabric)
+            requires("fabric-api")
         if (supportsConnector)
             requires("sinytra-connector")
-        requires("hoofprint")
-        requires("surveyor-map-framework")
+        if (supportsLaunchpad)
+            requires("launchpad")
+        if (edgeRelease) {
+            embeds("hoofprint")
+            embeds("surveyor-map-framework")
+            client = true
+            server = true
+        } else {
+            requires("hoofprint")
+            requires("surveyor-map-framework")
+            client = true
+            server = false
+        }
+        requires("mru")
         optional("mcqoy")
         optional("immersive-overlays")
     }
