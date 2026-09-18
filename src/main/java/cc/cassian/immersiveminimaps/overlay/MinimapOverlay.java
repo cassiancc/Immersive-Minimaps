@@ -203,9 +203,16 @@ public class MinimapOverlay {
                     /*guiGraphics.pose().mulPose(com.mojang.math.Axis.ZP.rotationDegrees(180.0F + playerRotation));
                     *///?}
                     translate(guiGraphics, -2.5F, -3.5F);
+					//? if <26.3 {
+					int width = 5;
+					int height = 7;
+					//?} else {
+					/*int width = 8;
+					int height = 8;
+					*///?}
 					HudUtils.blit(
                             guiGraphics,
-                            ModClient.withVanillaNamespace("textures/map/decorations/player.png"), 0, 0, 2.0F, 0.0F, 5, 7, 5, 7, 8, 8, argb);
+                            ModClient.withVanillaNamespace("textures/map/decorations/player.png"), 0, 0, 2.0F, 0.0F, width, height, width, height, 8, 8, argb);
                 } else if (ModClient.CONFIG.style.draw_offscreen_players) {
                     translate(guiGraphics,-3.0F, -3.0F);
 					HudUtils.blit(

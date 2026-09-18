@@ -16,7 +16,6 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,25 +34,27 @@ public class ModClient implements ClientModInitializer {
 	/*public static final String CATEGORY = "key.category.immersiveminimaps.keybinds";
 	*///?}
 
+	//~ if >26.2 'KEYSYM'->'KEYBOARD' {
 	// A key mapping with keyboard as the default
 	public static final KeyMapping zoomIn = new KeyMapping(
 			"key.immersiveminimaps.zoom_in", // The translation key of the name shown in the Controls screen
 			InputConstants.Type.KEYSYM, // This key mapping is for Keyboards by default
-			GLFW.GLFW_KEY_EQUAL, // The default keycode
+			InputConstants.KEY_EQUALS, // The default keycode
 			CATEGORY
 	);
 	public static final KeyMapping zoomOut = new KeyMapping(
 			"key.immersiveminimaps.zoom_out", // The translation key of the name shown in the Controls screen
 			InputConstants.Type.KEYSYM, // This key mapping is for Keyboards by default
-			GLFW.GLFW_KEY_MINUS, // The default keycode
+			InputConstants.KEY_MINUS, // The default keycode
 			CATEGORY
 	);
 	public static final KeyMapping caveMode = new KeyMapping(
 			"key.immersiveminimaps.cave_mode", // The translation key of the name shown in the Controls screen
 			InputConstants.Type.KEYSYM, // This key mapping is for Keyboards by default
-			GLFW.GLFW_KEY_BACKSPACE, // The default keycode
+			InputConstants.KEY_BACKSPACE, // The default keycode
 			CATEGORY
 	);
+	//~}
 
 	public static Identifier locate(String path) {
 		return CommonUtils.id(MOD_ID, path);

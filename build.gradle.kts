@@ -225,7 +225,7 @@ dependencies {
         }
         include("folk.sisby:surveyor:${property("deps.surveyor")}")
         include("garden.hestia:hoofprint:${property("deps.hoofprint")}")
-        implementation("eu.pb4:trinkets:${property("deps.trinkets")}"){
+        modCompileOnly("eu.pb4:trinkets:${property("deps.trinkets")}"){
             exclude(group = "net.fabricmc")
         }
     } else {
@@ -311,7 +311,11 @@ publishMods {
     additionalFiles.from(loomx.modSourcesJar.map { it.archiveFile.get() })
 
     // one of BETA, ALPHA, STABLE
-    type = STABLE
+    if (edgeRelease) {
+        type = BETA
+    } else {
+        type = STABLE
+    }
     displayName = "${property("mod.name")} ${property("mod.version")} for ${stonecutter.current.version}"
     version = "${property("mod.version")}+${property("deps.minecraft")}-${loader}"
     changelog = provider { rootProject.file("CHANGELOG-LATEST.md").readText() }
