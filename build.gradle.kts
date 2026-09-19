@@ -174,6 +174,13 @@ repositories {
             includeGroupAndSubgroups("org.sinytra")
         }
     }
+    maven {
+        name = "Cassian's Maven"
+        url = uri("https://maven.cassian.cc")
+        content {
+            includeGroupAndSubgroups("cc.cassian")
+        }
+    }
     mavenLocal()
     mavenCentral()
 
