@@ -179,6 +179,8 @@ repositories {
         url = uri("https://maven.cassian.cc")
         content {
             includeGroupAndSubgroups("cc.cassian")
+            includeGroupAndSubgroups("folk.sisby")
+            includeGroupAndSubgroups("garden.hestia")
         }
     }
     mavenLocal()
