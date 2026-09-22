@@ -184,8 +184,6 @@ repositories {
         }
     }
     mavenLocal()
-    mavenCentral()
-
 }
 
 dependencies {
@@ -229,19 +227,22 @@ dependencies {
     }
 
     if (unobfuscated) {
+        modCompileOnly("eu.pb4:trinkets:${property("deps.trinkets")}"){
+            exclude(group = "net.fabricmc")
+        }
+    } else {
+        modCompileOnly("dev.emi:trinkets:${property("deps.trinkets")}") {
+            exclude(group = "net.fabricmc")
+        }
+    }
+    if (edgeRelease) {
         implementation("garden.hestia:hoofprint:${property("deps.hoofprint")}"){
             exclude("net.fabricmc")
         }
         include("folk.sisby:surveyor:${property("deps.surveyor")}")
         include("garden.hestia:hoofprint:${property("deps.hoofprint")}")
-        modCompileOnly("eu.pb4:trinkets:${property("deps.trinkets")}"){
-            exclude(group = "net.fabricmc")
-        }
     } else {
         modImplementation("maven.modrinth:hoofprint:${property("deps.hoofprint")}")
-        modCompileOnly("dev.emi:trinkets:${property("deps.trinkets")}") {
-            exclude(group = "net.fabricmc")
-        }
     }
     implementation("folk.sisby:kaleido-config:${property("deps.kaleido")}")
     include("folk.sisby:kaleido-config:${property("deps.kaleido")}")
