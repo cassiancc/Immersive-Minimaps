@@ -12,7 +12,7 @@ val fabric = loader == "fabric"
 val minecraft = stonecutter.current.version
 val mcVersion = stonecutter.current.project.substringBeforeLast('-')
 val supportsConnector = stonecutter.eval(mcVersion, "=1.21.1") || stonecutter.eval(mcVersion, "=1.20.1") || stonecutter.eval(mcVersion, "=26.1")
-val supportsLaunchpad = stonecutter.eval(mcVersion, "=26.1")
+val supportsLaunchpad = stonecutter.eval(mcVersion, "=26.1") || stonecutter.eval(mcVersion, "=26.2")
 val edgeRelease = stonecutter.eval(mcVersion, ">26.1.2") || !fabric
 val unobfuscated = stonecutter.eval(mcVersion, ">26")
 
