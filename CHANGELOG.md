@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.5]
+
+### Added
+- Support for NeoForge 26.2.
+
+### Fixed
+- On 26.1 NeoForge, updated embedded Forgified Fabric API modules.
+
 ## [1.2.4]
 ### Changed
 - Launchpad-compatible version has been split into a seperate version that bundles only the necessary modules of Forgified Fabric API, as well as versions of Hoofprint and Surveyor that are compatible with Launchpad.

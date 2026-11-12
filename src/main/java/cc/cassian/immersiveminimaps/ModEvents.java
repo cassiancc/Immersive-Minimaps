@@ -1,7 +1,7 @@
 package cc.cassian.immersiveminimaps;
 
 import cc.cassian.immersiveminimaps.helpers.ModLists;
-import cc.cassian.mru.client.util.HudUtils;
+import cc.cassian.asphodel.client.util.HudUtils;
 import folk.sisby.surveyor.Surveyor;
 import folk.sisby.surveyor.landmark.Landmark;
 import folk.sisby.surveyor.landmark.WorldLandmarks;

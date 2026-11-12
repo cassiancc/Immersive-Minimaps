@@ -2,7 +2,7 @@ package cc.cassian.immersiveminimaps.mixin.minecraft;
 
 import cc.cassian.immersiveminimaps.ModClient;
 import cc.cassian.immersiveminimaps.helpers.ModLists;
-import cc.cassian.mru.client.util.HudUtils;
+import cc.cassian.asphodel.client.util.HudUtils;
 import com.moulberry.mixinconstraints.annotations.IfModLoaded;
 import garden.hestia.hoofprint.HoofprintScreen;
 import net.minecraft.client.Minecraft;

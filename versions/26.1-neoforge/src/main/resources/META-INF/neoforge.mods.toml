@@ -21,7 +21,7 @@ ordering="NONE"
 side="BOTH"
 
 [[dependencies.immersiveminimaps]]
-modId="mru"
+modId="asphodel"
 mandatory=true
 versionRange="*"
 ordering="NONE"

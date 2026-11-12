@@ -1,5 +1,2 @@
-### Added
-- Support for NeoForge 26.2.
-
-### Fixed
-- On 26.1 NeoForge, updated embedded Forgified Fabric API modules.
+### Changed
+- Now requires Asphodel API rather than MRU.

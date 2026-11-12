@@ -49,6 +49,7 @@ jsonlang {
 }
 
 repositories {
+    mavenLocal()
     maven {
         name = "shedaniel (Cloth Config)"
         url = uri("https://maven.shedaniel.me/")
@@ -222,19 +223,10 @@ dependencies {
     modImplementation("folk.sisby:surveyor:${property("deps.surveyor")}"){
         exclude("net.fabricmc")
     }
-    modImplementation("cc.cassian.mru:mru-${loader}:${property("deps.mru")}+${property("deps.minecraft")}"){
+    modImplementation("cc.cassian.asphodel:asphodel-api-${loader}:${property("deps.asphodel")}+${property("deps.minecraft")}"){
         exclude("net.fabricmc")
     }
 
-    if (unobfuscated) {
-        modCompileOnly("eu.pb4:trinkets:${property("deps.trinkets")}"){
-            exclude(group = "net.fabricmc")
-        }
-    } else {
-        modCompileOnly("dev.emi:trinkets:${property("deps.trinkets")}") {
-            exclude(group = "net.fabricmc")
-        }
-    }
     if (edgeRelease) {
         implementation("garden.hestia:hoofprint:${property("deps.hoofprint")}"){
             exclude("net.fabricmc")
@@ -355,7 +347,7 @@ publishMods {
             requires("surveyor")
             environment = CLIENT_ONLY
         }
-        requires("mru")
+        requires("asphodel-api")
         optional("mcqoy")
         optional("immersive-overlays")
     }
@@ -382,7 +374,7 @@ publishMods {
             client = true
             server = false
         }
-        requires("mru")
+        requires("asphodel-api")
         optional("mcqoy")
         optional("immersive-overlays")
     }

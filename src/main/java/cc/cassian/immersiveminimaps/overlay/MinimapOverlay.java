@@ -3,7 +3,7 @@ package cc.cassian.immersiveminimaps.overlay;
 
 import cc.cassian.immersiveminimaps.ModClient;
 import cc.cassian.immersiveminimaps.helpers.ColorUtil;
-import cc.cassian.mru.client.util.HudUtils;
+import cc.cassian.asphodel.client.util.HudUtils;
 import folk.sisby.surveyor.client.SurveyorClient;
 import folk.sisby.surveyor.landmark.Landmark;
 import folk.sisby.surveyor.landmark.component.LandmarkComponentTypes;

@@ -2,9 +2,9 @@ package cc.cassian.immersiveminimaps.overlay;
 
 import cc.cassian.immersiveminimaps.ModClient;
 import cc.cassian.immersiveminimaps.helpers.ModLists;
-import cc.cassian.mru.Platform;
-import cc.cassian.mru.client.util.HudUtils;
-import cc.cassian.mru.util.ItemContainerUtils;
+import cc.cassian.asphodel.Platform;
+import cc.cassian.asphodel.client.util.HudUtils;
+import cc.cassian.asphodel.util.ItemContainerUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
